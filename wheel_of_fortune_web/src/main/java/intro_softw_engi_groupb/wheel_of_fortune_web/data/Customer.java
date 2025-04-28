@@ -1,10 +1,10 @@
 package intro_softw_engi_groupb.wheel_of_fortune_web.data;
 
-import com.vaadin.flow.component.template.Id;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;

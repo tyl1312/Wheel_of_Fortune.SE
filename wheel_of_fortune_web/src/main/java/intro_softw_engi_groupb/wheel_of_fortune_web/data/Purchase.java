@@ -4,10 +4,11 @@ package intro_softw_engi_groupb.wheel_of_fortune_web.data;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.vaadin.flow.component.template.Id;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 
+@Entity
 public class Purchase {
 
     @Id

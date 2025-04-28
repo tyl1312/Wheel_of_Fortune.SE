@@ -1,7 +1,7 @@
 package intro_softw_engi_groupb.wheel_of_fortune_web.data;
 
-import com.vaadin.flow.component.template.Id;
 
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
 
 public class Product {
