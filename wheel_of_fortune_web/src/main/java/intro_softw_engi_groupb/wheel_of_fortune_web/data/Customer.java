@@ -5,24 +5,24 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 
 @Entity
+@Table(name = "customers")
 public class Customer {
 
     //infomation for customer
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "id_generator")
-    @SequenceGenerator(name = "id_generator", initialValue = 1000)
-    private Long id;
+    // @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long customerId;
 
     @NotEmpty
-    private String name;
+    private String fullName;
 
     @Pattern(regexp = "^(\\+84|0)(\\d{9,10})$", message = "{invalid.phonenumber}")
     private String phoneNumber;
@@ -38,15 +38,15 @@ public class Customer {
 
     @Override
     public String toString() {
-        return id + " " + name;
+        return customerId + " " + fullName;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
+        result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
         return result;
     }
 
@@ -59,15 +59,15 @@ public class Customer {
         if (getClass() != obj.getClass())
             return false;
         Customer other = (Customer) obj;
-        if (id == null) {
-            if (other.id != null)
+        if (customerId == null) {
+            if (other.customerId != null)
                 return false;
-        } else if (!id.equals(other.id))
+        } else if (!customerId.equals(other.customerId))
             return false;
-        if (name == null) {
-            if (other.name != null)
+        if (fullName == null) {
+            if (other.fullName != null)
                 return false;
-        } else if (!name.equals(other.name))
+        } else if (!fullName.equals(other.fullName))
             return false;
         return true;
     }
@@ -75,15 +75,15 @@ public class Customer {
     //// Getter and Setter methods
 
     public Long getId() {
-        return id;
+        return customerId;
     }
 
-    public String getName() {
-        return name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFullName(String name) {
+        this.fullName = name;
     }
 
     public String getPhoneNumber() {

@@ -34,5 +34,11 @@ public class HomeView extends VerticalLayout {
             getUI().ifPresent(ui -> ui.navigate("hellovn"));
         });
         add(buttonVn);
+
+        var buttonTest = new Button("Trang thử nghiệm");
+        buttonTest.addClickListener(event -> {
+            getUI().ifPresent(ui -> ui.navigate("test"));
+        });
+        add(buttonTest);
     }
 }
