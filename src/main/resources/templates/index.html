@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Wheel of Fortune</title>
+    <style>
+        :root {
+            --milestone-base-color: #cccccc;
+            --milestone-progress-color: #000000;
+            --milestone-10-color: #ffbc42;
+            --milestone-25-color: #d81159;
+            --milestone-50-color: #8f2d56;
+            --milestone-80-color: #218380;
+            --milestone-100-color: #73d2de;
+
+            --component-width: 50px;
+            --line-width: 5px;
+            --dot-size: 17.5px;
+        }
+
+        body {
+            font-family: sans-serif;
+            padding: 2rem;
+        }
+
+        .milestone-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: left;
+        }
+
+        .milestone-container {
+            display: flex;
+            flex-direction: row;
+            position: relative;
+            height: 400px;
+            width: var(--component-width);
+        }
+
+        .chart-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex: 1 50%;
+            position: relative;
+        }
+
+        .line-container {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            height: 100%;
+            width: var(--dot-size);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .line {
+            position: absolute;
+            left: calc(var(--dot-size) / 2);
+            transform: translateX(-50%);
+            width: var(--line-width);
+            height: 100%;
+            background-color: var(--milestone-progress-color);
+            z-index: 1;
+        }
+
+        .line.left {
+            background-color: var(--milestone-base-color);
+            z-index: 2;
+            height: 0;
+            bottom: 0;
+            position: absolute;
+        }
+
+        .dot-container {
+            position: absolute;
+            width: var(--dot-size);
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dot {
+            position: absolute;
+            width: 60px;
+            height: 20px;
+            border: 0.5px solid #fff;
+            border-radius: 50%;
+            background-color: var(--milestone-base-color);
+            left: 50%;
+            margin-left: -30px;
+            transition: background-color ease-out;
+            font-size: 12px;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .prize{
+            border: 2px solid #000000;
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            transform: translateY(-50%);
+            transition: all ease-out;
+            z-index: 3;
+        }
+
+        .prize.revealed {
+            border: 2px solid gold;
+            cursor: pointer;
+        }
+        .prize.clicked{
+            display: flex;
+        }
+        .label-container {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            margin-left: 2rem;
+        }
+
+        .label {
+            position: absolute;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--milestone-base-color);
+            transform: translateY(50%);
+        }
+
+
+        /* Vertical positioning by % from bottom */
+        .milestones.milestone__10 .dot { bottom: 10%; }
+        .milestones.milestone__25 .dot { bottom: 25%; }
+        .milestones.milestone__50 .dot { bottom: 50%; }
+        .milestones.milestone__80 .dot { bottom: 80%; }
+        .milestones.milestone__100 .dot { bottom: 100%; }
+
+        .milestones.milestone__10 .label { bottom: 10%; }
+        .milestones.milestone__25 .label { bottom: 25%; }
+        .milestones.milestone__50 .label { bottom: 50%; }
+        .milestones.milestone__80 .label { bottom: 80%; }
+        .milestones.milestone__100 .label { bottom: 100%; }
+
+    </style>
+</head>
+<body>
+
+<h2>Welcome, <span th:text="${username}"></span></h2>
+<div class="milestone-wrapper">
+
+    <div class="milestone-container">
+        <div class="chart-container">
+            <div class="line-container">
+                <div class="line"></div>
+                <div class="line left"></div>
+            </div>
+
+            <div class="dot-container">
+                <div class="milestones milestone__10" data-value="10">
+                    <div class="dot">200k</div>
+                </div>
+                <div class="milestones milestone__25" data-value="25">
+                    <div class="dot">500k</div>
+                </div>
+                <div class="milestones milestone__50" data-value="50">
+                    <div class="dot">1000k</div>
+                </div>
+                <div class="milestones milestone__80" data-value="80">
+                    <div class="dot">2500k</div>
+                </div>
+                <div class="milestones milestone__100" data-value="100">
+                    <div class="dot">5000k</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="label-container">
+            <div class="milestones milestone__10">
+                <div class="label">
+                    <img src="" class="prize">
+                </div>
+            </div>
+            <div class="milestones milestone__25">
+                <div class="label">
+                    <img src="" class="prize">
+                </div>
+            </div>
+            <div class="milestones milestone__50">
+                <div class="label">
+                    <img src="" class="prize">
+                </div>
+            </div>
+            <div class="milestones milestone__80">
+                <div class="label">
+                    <img src="" class="prize">
+                </div>
+            </div>
+            <div class="milestones milestone__100">
+                <div class="label">
+                    <img src="" class="prize">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div><button onclick="myFunction()">Click me</button></div>
+
+<script>
+    const progress = document.getElementsByClassName("line left")[0]
+    const milestones = document.querySelectorAll(".milestones")
+    let value = 0
+    function myFunction() {
+        value = Math.min(100, value + 10); // prevent going over 100%
+        progress.style.height = value + '%';
+        progress.style.bottom = '0'; // make sure it grows from bottom
+
+        const progressColor = getComputedStyle(document.documentElement)
+            .getPropertyValue('--milestone-progress-color').trim();
+
+        milestones.forEach(milestone => {
+            const milestoneValue = parseInt(milestone.getAttribute('data-value'));
+            if (milestoneValue <= value) {
+                const classList = Array.from(milestone.classList);
+                const matchingClass = classList.find(c => c.startsWith('milestone__'));
+                if (matchingClass) {
+                    const labelMilestone = document.querySelector(
+                        `.label-container .${matchingClass} .prize`
+                    );
+                    if (labelMilestone) {
+                        labelMilestone.classList.add("revealed");
+                    }
+                }
+            }
+        });
+    }
+
+    document.querySelectorAll('.prize').forEach(img => {
+        img.addEventListener('click', function () {
+            if (this.classList.contains('revealed')) {
+                alert("Prize granted")
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
