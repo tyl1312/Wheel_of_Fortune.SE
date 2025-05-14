@@ -40,3 +40,40 @@ document.querySelectorAll('.ticket-box').forEach(function (box) {
         }
     });
 });
+
+
+// Show and hide the mission and history panel
+const showMissionBtn = document.getElementById('show-mission-btn');
+const closeMissionBtn = document.getElementById('close-mission-btn');
+const missionPanel = document.getElementById('mission-panel');
+
+const showHistoryBtn = document.getElementById('show-history-btn');
+const closeHistoryBtn = document.getElementById('close-history-btn');
+const historyPanel = document.getElementById('history-panel');
+const overlay = document.getElementById('overlay');
+
+showMissionBtn.addEventListener('click', () => {
+    missionPanel.classList.add('visible');
+    overlay.classList.add('visible');
+});
+
+closeMissionBtn.addEventListener('click', () => {
+    missionPanel.classList.remove('visible');
+    overlay.classList.remove('visible');
+});
+
+showHistoryBtn.addEventListener('click', () => {
+    historyPanel.classList.add('visible');
+    overlay.classList.add('visible');
+});
+
+closeHistoryBtn.addEventListener('click', () => {
+    historyPanel.classList.remove('visible');
+    overlay.classList.remove('visible');
+});
+
+overlay.addEventListener('click', () => {
+    missionPanel.classList.remove('visible');
+    historyPanel.classList.remove('visible');
+    overlay.classList.remove('visible');
+});

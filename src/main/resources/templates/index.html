@@ -15,6 +15,7 @@
         <img src="/img/ticket.png" alt="Spin" class="spin-img">
     </div>
 </div>
+
 <div class="container">
     <div class="milestone-container">
         <div class="milestones">
@@ -25,35 +26,35 @@
                 </div>
 
                 <div class="milestone milestone__10" data-value="10">
-                    <div class="dot">200k</div>
+                    <div class="dot">250k</div>
                     <div class="ticket-box">
                         <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
                         <span class="ticket-count">1</span>
                     </div>
                 </div>
                 <div class="milestone milestone__30" data-value="30">
-                    <div class="dot">500k</div>
-                    <div class="ticket-box">
-                        <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
-                        <span class="ticket-count">1</span>
-                    </div>
-                </div>
-                <div class="milestone milestone__50" data-value="50">
-                    <div class="dot">800k</div>
+                    <div class="dot">750k</div>
                     <div class="ticket-box">
                         <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
                         <span class="ticket-count">2</span>
                     </div>
                 </div>
+                <div class="milestone milestone__55" data-value="55">
+                    <div class="dot">1250k</div>
+                    <div class="ticket-box">
+                        <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
+                        <span class="ticket-count">3</span>
+                    </div>
+                </div>
                 <div class="milestone milestone__80" data-value="80">
-                    <div class="dot">1500</div>
+                    <div class="dot">2000k</div>
                     <div class="ticket-box">
                         <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
                         <span class="ticket-count">4</span>
                     </div>
                 </div>
                 <div class="milestone milestone__100" data-value="100">
-                    <div class="dot">2500k</div>
+                    <div class="dot">3000k</div>
                     <div class="ticket-box">
                         <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
                         <span class="ticket-count">5</span>
@@ -65,15 +66,71 @@
     <div class="wheel-container">
         <h2>This is where to build wheel</h2>
     </div>
-    <div class="mission-container"></div>
+
+    <div class="mission-container">
+        <div class="btn-container">
+            <img id="show-mission-btn" src="/img/paper.png" alt="Daily Missions" class="icon-btn">
+            <img id="show-history-btn" src="/img/file.png" alt="Prize History" class="icon-btn">
+        </div>
+
+        <div id="mission-panel" class="hidden">
+            <div class="mission-header">
+                <h3 class="daily-mission-title">Daily mission</h3>
+                <button id="close-mission-btn" class="close-btn">✕</button>
+            </div>
+            <div class="mission-list">
+                <div class="mission-item">
+                    <div class="mission-progress">
+                        <span>0/1</span>
+                        <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                    </div>
+                    <div class="mission-description">Login the game</div>
+                    <button class="claim-btn disabled">Claim</button>
+                </div>
+                <div class="mission-item">
+                    <div class="mission-progress">
+                        <span>1/1</span>
+                        <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                    </div>
+                    <div class="mission-description">Spin one time</div>
+                    <button class="claim-btn">Claim</button>
+                </div>
+                <div class="mission-item">
+                    <div class="mission-progress">
+                        <span>0/2</span>
+                        <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                    </div>
+                    <div class="mission-description">CHƠI 2 TRẬN 5V5</div>
+                    <button class="claim-btn disabled">Claim</button>
+                </div>
+                <div class="mission-item">
+                    <div class="mission-progress">
+                        <span>0/1</span>
+                        <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                    </div>
+                    <div class="mission-description">
+                        SAO CHÉP ID DANH SÁCH PHẦN THƯỞNG CỦA BẠN
+                    </div>
+                    <button class="claim-btn disabled">Claim</button>
+                </div>
+            </div>
+            <button class="claim-all-btn">Claim all</button>
+        </div>
+
+        <div id="history-panel" class="hidden">
+            <div class="history-header">
+                <h3>Prize History</h3>
+                <button id="close-history-btn" class="close-btn">✕</button>
+            </div>
+            <div class="history-body">
+                <p>You haven't received any prize yet. Spin now and claim your prize</p>
+            </div>
+        </div>
+    </div>
 </div>
 
+<div id="overlay"></div>
 
-<div id="overlay">
-    <h2>Congratulations</h2>
-    <p>You've gained 1 extra play</p>
-    <a href="">Play now</a>
-</div>
 <div><button onclick="myFunction()">Click me</button></div>
 
 <script th:src="@{/js/script.js}"></script>
