@@ -4,10 +4,13 @@ import com.example.demo.dto.UpdateUserRequest;
 import com.example.demo.dto.UserDto;
 import com.example.demo.model.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+
     UserDto toDto(User user);
+    User toEntity(UserDto userDto);
     void update(UpdateUserRequest request, @MappingTarget User user);
 }
