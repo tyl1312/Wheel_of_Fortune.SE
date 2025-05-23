@@ -15,11 +15,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private int user_id;
-    private String phone_number;
-    private String full_name;
+    private int userId;
+    private String phoneNumber;
+    private String fullName;
     private String gender;
-    private Long total_spent;
+    private Long totalSpent;
     private int spin;
 
     @JsonIgnore
@@ -28,11 +28,11 @@ public class User {
     @Override
     public String toString() {
         return getClass().getSimpleName() +
-                " (user_id=" + user_id +
-                ", full name=" + full_name +
-                ", phone number=" + phone_number +
+                " (user_id=" + userId +
+                ", full name=" + fullName +
+                ", phone number=" + phoneNumber +
                 ", gender=" + gender +
-                ", total spent=" + total_spent +
+                ", total spent=" + totalSpent +
                 ", spin=" + spin +
                 ")";
     }

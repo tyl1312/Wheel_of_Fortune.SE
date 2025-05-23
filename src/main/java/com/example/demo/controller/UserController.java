@@ -40,7 +40,7 @@ public class UserController {
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto data, UriComponentsBuilder uriBuilder) {
         // Cần thêm logic save user, không chỉ trả lại data cứng
         // Giả sử bạn đã xử lý save trong service hoặc repo trước
-        var uri = uriBuilder.path("/users/{id}").buildAndExpand(data.getUser_id()).toUri();
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(data.getUserId()).toUri();
         return ResponseEntity.created(uri).body(data);
     }
 
