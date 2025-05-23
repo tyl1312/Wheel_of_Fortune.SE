@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/users")
@@ -76,5 +78,39 @@ public class UserController {
         userRepository.save(user);
 
         return ResponseEntity.noContent().build();
+    }
+
+    // ✅ Thêm 2 API này để frontend gọi lấy/cập nhật user hiện tại:
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getCurrentUser(HttpSession session) {
+        Object userId = session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        var user = userRepository.findById((int) userId).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(userMapper.toDto(user));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserDto> updateCurrentUser(@RequestBody UpdateUserRequest request, HttpSession session) {
+        Object userId = session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        var user = userRepository.findById((int) userId).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        userMapper.update(request, user);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 }
