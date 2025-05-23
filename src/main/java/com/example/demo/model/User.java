@@ -29,6 +29,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @Setter(AccessLevel.NONE)
     @Column(name = "points")
     private int points;
 
