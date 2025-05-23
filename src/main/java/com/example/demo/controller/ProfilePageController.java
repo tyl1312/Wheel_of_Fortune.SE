@@ -10,33 +10,38 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/profile")
 public class ProfilePageController {
     private final UserRepository userRepository;
 
-    @GetMapping("/profile")
+    @GetMapping
     public String profile(HttpSession session, Model model) {
         Object userId = session.getAttribute("userId");
-        if (userId == null) return "redirect:/";
+        if (userId == null) return "redirect:/login";
 
-        var user = userRepository.findById((int) userId).orElse(null);
-        if (user == null) return "redirect:/";
+        User user = userRepository.findById((Integer) userId).orElse(null);
+        if (user == null) return "redirect:/logout";
 
         model.addAttribute("user", user);
         return "profile";
     }
 
-    @PostMapping("/profile/update")
+    @PostMapping("/update")
     public String updateProfile(@RequestParam String full_name,
                                 @RequestParam String gender,
+                                @RequestParam(required = false) String email,
                                 HttpSession session) {
         Object userId = session.getAttribute("userId");
-        if (userId == null) return "redirect:/";
+        if (userId == null) return "redirect:/login";
 
-        var user = userRepository.findById((int) userId).orElse(null);
-        if (user == null) return "redirect:/";
+        User user = userRepository.findById((Integer) userId).orElse(null);
+        if (user == null) return "redirect:/logout";
 
         user.setFull_name(full_name);
         user.setGender(gender);
+        if (email != null && !email.isBlank()) {
+            user.setEmail(email);
+        }
         userRepository.save(user);
 
         return "redirect:/profile";
