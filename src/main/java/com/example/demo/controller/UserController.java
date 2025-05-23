@@ -1,11 +1,10 @@
 package com.example.demo.controller;
 
+import com.example.demo.request.ChangePasswordRequest;
+import com.example.demo.request.UpdateUserRequest;
 import com.example.demo.dto.UserDto;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.request.ChangePasswordRequest;
-import com.example.demo.request.UpdateUserRequest;
-
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
+    public ResponseEntity<UserDto> getUser(@PathVariable int id) {
         var user = userRepository.findById(id).orElse(null);
         if(user == null) {
             return ResponseEntity.notFound().build();
@@ -38,12 +37,12 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto data, UriComponentsBuilder uriBuilder) {
-        var uri = uriBuilder.path("/users/{id}").buildAndExpand(data.getId()).toUri();
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(data.getUser_id()).toUri();
         return ResponseEntity.created(uri).body(data);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable(name = "id") Long id, @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable(name = "id") int id, @RequestBody UpdateUserRequest request) {
         var user = userRepository.findById(id).orElse(null);
         if(user == null) {
             return ResponseEntity.notFound().build();
@@ -55,7 +54,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
         var user = userRepository.findById(id).orElse(null);
         if(user == null) {
             return ResponseEntity.notFound().build();
@@ -65,7 +64,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/change-password")
-    public ResponseEntity<Void> changePassword(@PathVariable Long id, @RequestBody ChangePasswordRequest request) {
+    public ResponseEntity<Void> changePassword(@PathVariable int id, @RequestBody ChangePasswordRequest request) {
         var user = userRepository.findById(id).orElse(null);
         if(user == null) {
             return ResponseEntity.notFound().build();

@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class UserDto {
-    private Long id;
-    private String name;
-    private String email;
-    private String phone;
-    private int points;
+    private int user_id;
+    private String phone_number;
+    private String full_name;
+    private String gender;
+    private Long total_spent;
+    private int spin;
 }
