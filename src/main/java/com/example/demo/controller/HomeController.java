@@ -18,10 +18,10 @@ public class HomeController {
     public String index(HttpSession session, Model model) {
         Object user = session.getAttribute("user");
         if (user == null) {
-            return "login"; // chưa đăng nhập -> hiện trang login
+            return "login";
         }
         model.addAttribute("username", user);
-        return "index"; // đã đăng nhập -> vào trang chính
+        return "index";
     }
 
     @PostMapping("/")
@@ -32,17 +32,49 @@ public class HomeController {
         User user = userRepository.findByPhoneNumberAndPassword(phone_number, password).orElse(null);
         if (user == null) {
             model.addAttribute("error", "Sai tài khoản hoặc mật khẩu");
-            return "login"; // đăng nhập sai -> quay lại login với thông báo lỗi
+            return "login";
         }
 
-        session.setAttribute("userId", user.getUser_id()); // dùng để gọi API /users/me
-        session.setAttribute("user", user.getPhone_number());     // chỉ để hiển thị tên đăng nhập
-        return "redirect:/"; // chuyển hướng về /
+        session.setAttribute("userId", user.getUser_id());
+        session.setAttribute("user", user.getPhone_number());
+        return "redirect:/";
     }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // xoá toàn bộ session
+        session.invalidate();
         return "redirect:/";
+    }
+
+    @GetMapping("/profile")
+    public String profile(HttpSession session, Model model) {
+        Object userId = session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/";
+        }
+
+        User user = userRepository.findById((Integer) userId).orElse(null);
+        if (user == null) {
+            return "redirect:/logout";
+        }
+
+        model.addAttribute("user", user);
+        return "profile";
+    }
+
+    @PostMapping("/profile/update")
+    public String updateEmail(@RequestParam String email, HttpSession session) {
+        Object userId = session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/";
+        }
+
+        User user = userRepository.findById((Integer) userId).orElse(null);
+        if (user != null) {
+            user.setEmail(email);
+            userRepository.save(user);
+        }
+
+        return "redirect:/profile";
     }
 }
