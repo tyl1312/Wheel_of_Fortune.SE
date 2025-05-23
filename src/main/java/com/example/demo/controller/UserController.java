@@ -5,13 +5,12 @@ import com.example.demo.request.UpdateUserRequest;
 import com.example.demo.dto.UserDto;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 @AllArgsConstructor
@@ -39,19 +38,20 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto data, UriComponentsBuilder uriBuilder) {
+        // Cần thêm logic save user, không chỉ trả lại data cứng
+        // Giả sử bạn đã xử lý save trong service hoặc repo trước
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(data.getUser_id()).toUri();
         return ResponseEntity.created(uri).body(data);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable(name = "id") int id, @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable int id, @RequestBody UpdateUserRequest request) {
         var user = userRepository.findById(id).orElse(null);
         if(user == null) {
             return ResponseEntity.notFound().build();
         }
         userMapper.update(request, user);
         userRepository.save(user);
-
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
@@ -76,23 +76,20 @@ public class UserController {
         }
         user.setPassword(request.getNewPassword());
         userRepository.save(user);
-
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ Thêm 2 API này để frontend gọi lấy/cập nhật user hiện tại:
+    // API lấy và cập nhật user hiện tại (dùng session):
     @GetMapping("/me")
     public ResponseEntity<UserDto> getCurrentUser(HttpSession session) {
         Object userId = session.getAttribute("userId");
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
         var user = userRepository.findById((int) userId).orElse(null);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
@@ -102,15 +99,12 @@ public class UserController {
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
         var user = userRepository.findById((int) userId).orElse(null);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-
         userMapper.update(request, user);
         userRepository.save(user);
-
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 }
