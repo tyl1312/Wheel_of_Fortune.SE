@@ -1,37 +1,48 @@
 package com.example.demo.controller;
 
+import com.example.demo.repository.UserRepository;
+import com.example.demo.model.User;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
+@AllArgsConstructor
 public class HomeController {
 
-    @RequestMapping("/")
+    private final UserRepository userRepository;
+
+    @GetMapping("/")
     public String index(HttpSession session, Model model) {
         Object user = session.getAttribute("user");
         if (user == null) {
-            return "login";
+            return "login"; // chưa đăng nhập -> hiện trang login
         }
         model.addAttribute("username", user);
-        return "index";
-    }
-    @PostMapping("/")
-    public String login(@RequestParam String username,
-                        @RequestParam String password,
-                        HttpSession session) {
-        if (username != null && password != null) {
-            session.setAttribute("user", username);
-        }
-        return "redirect:/"; // Reload "/" and let GET decide what to show
+        return "index"; // đã đăng nhập -> vào trang chính
     }
 
-    @RequestMapping("/logout")
+    @PostMapping("/")
+    public String login(@RequestParam String email,
+                        @RequestParam String password,
+                        HttpSession session,
+                        Model model) {
+        User user = userRepository.findByEmailAndPassword(email, password).orElse(null);
+        if (user == null) {
+            model.addAttribute("error", "Sai tài khoản hoặc mật khẩu");
+            return "login"; // đăng nhập sai -> quay lại login với thông báo lỗi
+        }
+
+        session.setAttribute("userId", user.getUser_id()); // dùng để gọi API /users/me
+        session.setAttribute("user", user.getEmail());     // chỉ để hiển thị tên đăng nhập
+        return "redirect:/"; // chuyển hướng về /
+    }
+
+    @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate();
+        session.invalidate(); // xoá toàn bộ session
         return "redirect:/";
     }
 }
