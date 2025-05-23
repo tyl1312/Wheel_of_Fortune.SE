@@ -19,18 +19,17 @@ public class HomeController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String phone_number,
+    public String login(@RequestParam String phoneNumber,
                         @RequestParam String password,
                         HttpSession session,
                         Model model) {
-        User user = userRepository.findByPhoneNumberAndPassword(phone_number, password).orElse(null);
+        User user = userRepository.findByPhoneNumberAndPassword(phoneNumber, password).orElse(null);
         if (user == null) {
             model.addAttribute("error", "Sai tài khoản hoặc mật khẩu");
             return "login";
         }
-        session.setAttribute("userId", user.getUser_id());
-        session.setAttribute("username", user.getFull_name()); // hoặc user.getPhone_number()
-
+        session.setAttribute("userId", user.getUserId());
+        session.setAttribute("username", user.getFullName()); // hoặc user.getPhone_number()
         return "redirect:/";
     }
 
