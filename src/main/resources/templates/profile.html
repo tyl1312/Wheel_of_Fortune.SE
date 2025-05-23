@@ -6,42 +6,39 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
-    <div class="container">
-        <div class="login-container">
-            <div class="login-box">
-                <h2>User Profile</h2>
+<div class="container">
+    <div class="login-container">
+        <div class="login-box">
+            <h2>User Profile</h2>
 
+            <div class="form-group">
+                <label>Phone Number:</label>
+                <p th:text="${user.phone_number}">phone_number</p>
+            </div>
+
+            <form th:action="@{/profile/update}" method="post">
                 <div class="form-group">
-                    <label>Username:</label>
-                    <p th:text="${user.username}">username</p>
+                    <label for="full_name">Full Name:</label>
+                    <input type="text" id="full_name" name="full_name"
+                           th:value="${user.full_name}" placeholder="Full Name" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Phone Number:</label>
-                    <p th:text="${user.phone_number}">phone_number</p>
+                    <label for="gender">Gender:</label>
+                    <input type="text" id="gender" name="gender"
+                           th:value="${user.gender}" placeholder="Gender" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Email:</label>
-                    <p th:text="${user.email}">email</p>
+                    <button type="submit" class="btn">Update Info</button>
                 </div>
+            </form>
 
-                <form th:action="@{/profile/update}" method="post">
-                    <div class="form-group">
-                        <label for="email">Update Email:</label>
-                        <input type="email" id="email" name="email" placeholder="New email" required>
-                    </div>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn">Update Email</button>
-                    </div>
-                </form>
-
-                <div class="form-group">
-                    <a href="/" class="btn">Back to Home</a>
-                </div>
+            <div class="form-group">
+                <a th:href="@{/'"} class="btn">Back to Home</a>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>
