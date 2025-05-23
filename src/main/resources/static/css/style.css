@@ -1,0 +1,240 @@
+:root {
+    --milestone-base-color: #cccccc;
+    --milestone-progress-color: #000000;
+    --milestone-10-color: #ffbc42;
+    --milestone-25-color: #d81159;
+    --milestone-50-color: #8f2d56;
+    --milestone-80-color: #218380;
+    --milestone-100-color: #73d2de;
+
+    --component-width: 50px;
+    --line-width: 5px;
+    --dot-size: 17.5px;
+}
+
+body {
+    font-family: sans-serif;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+/* Progress Wheel Styles */
+.progress-container {
+    flex: 1;
+}
+
+.milestone-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: left;
+}
+
+.milestone-container {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    height: 400px;
+    width: var(--component-width);
+}
+
+.chart-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 1 50%;
+    position: relative;
+}
+
+.line-container {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: var(--dot-size);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.line {
+    position: absolute;
+    left: calc(var(--dot-size) / 2);
+    transform: translateX(-50%);
+    width: var(--line-width);
+    height: 100%;
+    background-color: var(--milestone-progress-color);
+    z-index: 1;
+}
+
+.line.left {
+    background-color: var(--milestone-base-color);
+    z-index: 2;
+    height: 0;
+    bottom: 0;
+    position: absolute;
+}
+
+.dot-container {
+    position: absolute;
+    width: var(--dot-size);
+    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dot {
+    position: absolute;
+    width: 60px;
+    height: 20px;
+    border: 0.5px solid #fff;
+    border-radius: 50%;
+    background-color: var(--milestone-base-color);
+    left: 50%;
+    margin-left: -30px;
+    transition: background-color ease-out;
+    font-size: 12px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prize {
+    border: 2px solid #000000;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    transform: translateY(-50%);
+    transition: all ease-out;
+    z-index: 3;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prize.revealed {
+    border: 2px solid gold;
+    cursor: pointer;
+    background-color: #fffacd;
+}
+
+.prize.clicked {
+    display: flex;
+}
+
+.label-container {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-left: 2rem;
+}
+
+.label {
+    position: absolute;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--milestone-base-color);
+    transform: translateY(50%);
+}
+
+/* Lucky Wheel Styles */
+.wheel-container {
+    flex: 1;
+    max-width: 400px;
+}
+
+.wheel-section {
+    text-align: center;
+    margin-left: 2rem;
+}
+
+.wheel-section h2 {
+    margin-bottom: 1rem;
+}
+
+.wheel-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: auto;
+}
+
+.pointer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px; 
+    height: 40px; 
+    background-color: #1e3a8a; 
+    border-radius: 50%; 
+    z-index: 2;
+}
+
+.pointer::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-left: 30px solid #1e3a8a; 
+}
+
+#wheel {
+    transform-origin: 50% 50%;
+    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.spin-btn {
+    margin-top: 1rem;
+    padding: 12px 24px;
+    font-size: 16px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.spin-btn:hover {
+    background: #218838;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 2px solid #444;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+/* Vertical positioning by % from bottom */
+.milestones.milestone__10 .dot { bottom: 10%; }
+.milestones.milestone__25 .dot { bottom: 25%; }
+.milestones.milestone__50 .dot { bottom: 50%; }
+.milestones.milestone__80 .dot { bottom: 80%; }
+.milestones.milestone__100 .dot { bottom: 100%; }
+
+.milestones.milestone__10 .label { bottom: 10%; }
+.milestones.milestone__25 .label { bottom: 25%; }
+.milestones.milestone__50 .label { bottom: 50%; }
+.milestones.milestone__80 .label { bottom: 80%; }
+.milestones.milestone__100 .label { bottom: 100%; }
