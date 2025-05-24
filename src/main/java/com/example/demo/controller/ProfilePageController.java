@@ -37,7 +37,7 @@ public class ProfilePageController {
         User user = userRepository.findById((Integer) userId).orElse(null);
         if (user == null) return "redirect:/logout";
 
-        user.setFullName(full_name);
+        user.setFull_name(full_name);
         user.setGender(gender);
         // if (email != null && !email.isBlank()) {
         //     user.setEmail(email);    No email field in User class

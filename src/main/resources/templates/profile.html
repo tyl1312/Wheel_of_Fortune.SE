@@ -12,8 +12,8 @@
             <h2>User Profile</h2>
 
             <div class="form-group">
-                <label>Phone Number:</label>
-                <p th:text="${user.phone_number}">phone_number</p>
+                <label>Email:</label>
+                <p th:text="${user.email}">emailr</p>
             </div>
 
             <form th:action="@{/profile/update}" method="post">
@@ -35,7 +35,7 @@
             </form>
 
             <div class="form-group">
-                <a th:href="@{/'"} class="btn">Back to Home</a>
+                <a th:href="@{/}" class="btn">Back to Home</a>
             </div>
         </div>
     </div>

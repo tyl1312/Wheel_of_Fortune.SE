@@ -18,44 +18,31 @@ public class HomeController {
         return "login";
     }
 
-<<<<<<< HEAD
-    @PostMapping("/")
-    public String login(@RequestParam String email,
-                        @RequestParam String password,
-                        HttpSession session,
-                        Model model) {
-        User user = userRepository.findByEmailAndPassword(email, password).orElse(null);
-=======
+
     @PostMapping("/login")
-    public String login(@RequestParam String phoneNumber,
-                        @RequestParam String password,
-                        HttpSession session,
-                        Model model) {
-        User user = userRepository.findByPhoneNumberAndPassword(phoneNumber, password).orElse(null);
->>>>>>> 83943d58ce46ab7842cb02fe19cf687c8500275d
+    public String login(@RequestParam String email,
+                          @RequestParam String password,
+                          HttpSession session,
+                          Model model) {
+        User user = userRepository.findByEmailAndPassword(email, password).orElse(null);
         if (user == null) {
             model.addAttribute("error", "Sai tài khoản hoặc mật khẩu");
             return "login";
         }
-        session.setAttribute("userId", user.getUserId());
-        session.setAttribute("username", user.getFullName()); // hoặc user.getPhone_number()
+        session.setAttribute("userId", user.getUser_id());
+        session.setAttribute("email", user.getEmail()); // hoặc user.getEmail()
+
         return "redirect:/";
     }
 
-<<<<<<< HEAD
-        session.setAttribute("userId", user.getUser_id()); // dùng để gọi API /users/me
-        session.setAttribute("user", user.getEmail());     // chỉ để hiển thị tên đăng nhập
-        return "redirect:/"; // chuyển hướng về /
-=======
     @GetMapping("/")
     public String index(HttpSession session, Model model) {
-        Object username = session.getAttribute("username");
-        if (username == null) {
+        Object email = session.getAttribute("email");
+        if (email == null) {
             return "redirect:/login";
         }
-        model.addAttribute("username", username);
+        model.addAttribute("email", email);
         return "index";
->>>>>>> 83943d58ce46ab7842cb02fe19cf687c8500275d
     }
 
     @GetMapping("/logout")
