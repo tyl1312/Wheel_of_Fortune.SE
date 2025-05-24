@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const spinButton = document.getElementById("spinButton");
     const resultText = document.getElementById("resultText");
     const resultPopup = document.getElementById("resultPopup");
-    const closePopupBtn = document.getElementById("closePopupBtn");
     const overlay = document.getElementById('overlay');
 
     // Lucky Wheel Variables
@@ -99,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             resultPopup.style.display = "block";
             overlay.classList.add('visible');
-
             spinButton.disabled = false;
         }, 4200);
     }

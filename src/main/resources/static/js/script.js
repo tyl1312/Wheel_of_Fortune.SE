@@ -1,6 +1,16 @@
-//Transition for the progress bar
+//DOM Element
 const progress = document.getElementsByClassName("line left")[0]
 const milestones = document.querySelectorAll(".milestone")
+const showMissionBtn = document.getElementById('show-mission-btn');
+const closeMissionBtn = document.getElementById('close-mission-btn');
+const missionPanel = document.getElementById('mission-panel');
+
+const showHistoryBtn = document.getElementById('show-history-btn');
+const closeHistoryBtn = document.getElementById('close-history-btn');
+const historyPanel = document.getElementById('history-panel');
+const overlay = document.getElementById('overlay');
+
+//Transition for the progress bar
 let value = 0
 function myFunction() {
     value = Math.min(100, value + 10); // prevent going over 100%
@@ -43,14 +53,7 @@ document.querySelectorAll('.ticket-box').forEach(function (box) {
 
 
 // Show and hide the mission and history panel
-const showMissionBtn = document.getElementById('show-mission-btn');
-const closeMissionBtn = document.getElementById('close-mission-btn');
-const missionPanel = document.getElementById('mission-panel');
 
-const showHistoryBtn = document.getElementById('show-history-btn');
-const closeHistoryBtn = document.getElementById('close-history-btn');
-const historyPanel = document.getElementById('history-panel');
-const overlay = document.getElementById('overlay');
 
 showMissionBtn.addEventListener('click', () => {
     missionPanel.classList.add('visible');
@@ -73,6 +76,13 @@ closeHistoryBtn.addEventListener('click', () => {
 });
 
 overlay.addEventListener('click', () => {
-    missionPanel.classList.remove('visible');
-    historyPanel.classList.remove('visible');
+    let missionVisible = missionPanel.classList.contains('visible');
+    let historyVisible = historyPanel.classList.contains('visible');
+
+    if (missionVisible || historyVisible) {
+        missionPanel.classList.remove('visible');
+        historyPanel.classList.remove('visible');
+        overlay.classList.remove('visible');
+    }
 });
+
