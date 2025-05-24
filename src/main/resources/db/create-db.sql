@@ -62,8 +62,8 @@ CREATE TABLE user_purchase_rewards (
 );
 
 -- Insert sample data into users table
-INSERT INTO `users`(`phone_number`,`password`,`full_name`) VALUES
-('0912345678','123','Miyazaki Hiagari'),
-('0123456789','123','Hoàng Đạo Thành');
+INSERT INTO `users`(`email`,`password`,`full_name`) VALUES
+('t@gmail.com','123','Miyazaki Hiagari'),
+('tung@gmail.com','123','Hoàng Đạo Thành');
 
 

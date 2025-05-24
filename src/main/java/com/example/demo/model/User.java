@@ -20,7 +20,7 @@ public class User {
     private String email;
     private String full_name;
     private String gender;
-    private Long totalSpent;
+    private Long total_spent = 0L;
     private int spin;
 
     @JsonIgnore
@@ -33,7 +33,7 @@ public class User {
                 ", full name=" + full_name +
                 ", email=" + email +
                 ", gender=" + gender +
-                ", total spent=" + totalSpent +
+                ", total spent=" + total_spent +
                 ", spin=" + spin +
                 ")";
     }

@@ -8,7 +8,7 @@
 <body>
 
     <div class="header">
-        <h2>Welcome, <span th:text="${username}"></span></h2>
+        <h2>Welcome, <span> <a th:href="@{/profile}" th:text="${fullName}"></a></span></h2>
         <div class="spin-container">
             <span class="spin-number">0</span>
             <img src="/img/ticket.png" alt="Spin" class="spin-img">
@@ -99,14 +99,6 @@
                         </div>
                         <div class="mission-description">Spin one time</div>
                         <button class="claim-btn">Claim</button>
-                    </div>
-                    <div class="mission-item">
-                        <div class="mission-progress">
-                            <span>0/2</span>
-                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                        </div>
-                        <div class="mission-description">CHƠI 2 TRẬN 5V5</div>
-                        <button class="claim-btn disabled">Claim</button>
                     </div>
                     <div class="mission-item">
                         <div class="mission-progress">

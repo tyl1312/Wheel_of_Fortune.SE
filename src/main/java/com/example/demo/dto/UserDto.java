@@ -15,6 +15,6 @@ public class UserDto {
     private String email;
     private String full_name;
     private String gender;
-    private Long totalSpent;
+    private Long total_spent;
     private int spin;
 }

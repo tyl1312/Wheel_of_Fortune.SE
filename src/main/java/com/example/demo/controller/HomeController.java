@@ -18,19 +18,62 @@ public class HomeController {
         return "login";
     }
 
-
     @PostMapping("/login")
     public String login(@RequestParam String email,
-                          @RequestParam String password,
-                          HttpSession session,
-                          Model model) {
-        User user = userRepository.findByEmailAndPassword(email, password).orElse(null);
+                        @RequestParam String password,
+                        HttpSession session,
+                        Model model) {
+        User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            model.addAttribute("error", "Sai tài khoản hoặc mật khẩu");
+            model.addAttribute("error", "Wrong email or password");
             return "login";
         }
+
+        if (!password.matches(user.getPassword())) {
+            model.addAttribute("error", "Wrong email or password");
+            return "redirect:/login";
+        }
+
+        // Store user info in session
         session.setAttribute("userId", user.getUser_id());
-        session.setAttribute("email", user.getEmail()); // hoặc user.getEmail()
+        session.setAttribute("email", user.getEmail());
+        session.setAttribute("fullName", user.getFull_name());
+        session.setAttribute("gender", user.getGender());
+
+        return "redirect:/";
+    }
+
+
+    @GetMapping("/register")
+    public String registerForm() {
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public String register(@RequestParam String email,
+                           @RequestParam String password,
+                           @RequestParam String full_name,
+                           @RequestParam String gender,
+                           Model model,
+                           HttpSession session){
+
+        if (userRepository.findByEmail(email).isPresent()) {
+            model.addAttribute("error", "Email already in use");
+            return "redirect:/register";
+        }
+
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setFull_name(full_name);
+        user.setGender(gender);
+
+        userRepository.save(user);
+
+        session.setAttribute("userId", user.getUser_id());
+        session.setAttribute("email", user.getEmail());
+        session.setAttribute("fullName", user.getFull_name());
+        session.setAttribute("gender", user.getGender());
 
         return "redirect:/";
     }
@@ -42,6 +85,7 @@ public class HomeController {
             return "redirect:/login";
         }
         model.addAttribute("email", email);
+        model.addAttribute("fullName", session.getAttribute("fullName"));
         return "index";
     }
 
