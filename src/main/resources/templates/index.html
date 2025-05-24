@@ -64,8 +64,10 @@
         </div>
     </div>
     <div class="wheel-container">
-        <h2>This is where to build wheel</h2>
+        <canvas id="wheel" width="400" height="400"></canvas>
+        <button id="spin" style="margin-top: 20px; padding: 10px 20px; font-size: 18px;">QUAY</button>
     </div>
+
 
     <div class="mission-container">
         <div class="btn-container">
@@ -134,6 +136,98 @@
 <div><button onclick="myFunction()">Click me</button></div>
 
 <script th:src="@{/js/script.js}"></script>
+
+<script>
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const spinBtn = document.getElementById("spin");
+
+    const sectors = [
+        "100k", "200k", "500k", "1 triệu",
+        "Mất lượt", "Chúc may mắn", "iPhone", "Voucher"
+    ];
+
+    const colors = [
+        "#f44336", "#e91e63", "#9c27b0", "#2196f3",
+        "#4caf50", "#ff9800", "#ffeb3b", "#795548"
+    ];
+
+    const totalSectors = sectors.length;
+    const arc = 2 * Math.PI / totalSectors;
+    let angle = 0;
+    let isSpinning = false;
+
+    function drawWheel() {
+        for (let i = 0; i < totalSectors; i++) {
+            const startAngle = i * arc;
+            const endAngle = startAngle + arc;
+
+            ctx.beginPath();
+            ctx.fillStyle = colors[i];
+            ctx.moveTo(200, 200);
+            ctx.arc(200, 200, 200, startAngle, endAngle);
+            ctx.fill();
+
+            ctx.save();
+            ctx.translate(200, 200);
+            ctx.rotate(startAngle + arc / 2);
+            ctx.textAlign = "right";
+            ctx.fillStyle = "#000";
+            ctx.font = "16px Arial";
+            ctx.fillText(sectors[i], 180, 10);
+            ctx.restore();
+        }
+
+        // Mũi tên chỉ
+        ctx.beginPath();
+        ctx.moveTo(200, 0);
+        ctx.lineTo(190, 20);
+        ctx.lineTo(210, 20);
+        ctx.closePath();
+        ctx.fillStyle = "#000";
+        ctx.fill();
+    }
+
+    function rotateWheel() {
+        if (isSpinning) return;
+        isSpinning = true;
+
+        const spinAngle = Math.random() * 360 + 360 * 5;
+        const duration = 4000;
+        const start = performance.now();
+
+        function animate(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+            angle = spinAngle * ease;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(200, 200);
+            ctx.rotate(angle * Math.PI / 180);
+            ctx.translate(-200, -200);
+            drawWheel();
+            ctx.restore();
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                isSpinning = false;
+                const finalAngle = (360 - angle % 360) % 360;
+                const sectorIndex = Math.floor(finalAngle / (360 / totalSectors));
+                const result = sectors[sectorIndex];
+                alert("Chúc mừng! Bạn nhận được: " + result);
+            }
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    drawWheel();
+    spinBtn.addEventListener("click", rotateWheel);
+</script>
+
 
 </body>
 </html>
