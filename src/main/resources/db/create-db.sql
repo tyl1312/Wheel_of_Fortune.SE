@@ -61,6 +61,9 @@ CREATE TABLE user_purchase_rewards (
     UNIQUE KEY (user_id, reward_id)
 );
 
-
+-- Insert sample data into users table
+INSERT INTO `users`(`phone_number`,`password`,`full_name`) VALUES
+('0912345678','123','Miyazaki Hiagari'),
+('0123456789','123','Hoàng Đạo Thành');
 
 
