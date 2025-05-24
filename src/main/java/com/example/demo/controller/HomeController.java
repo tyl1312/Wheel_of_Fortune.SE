@@ -25,18 +25,18 @@ public class HomeController {
     }
 
     @PostMapping("/")
-    public String login(@RequestParam String phone_number,
+    public String login(@RequestParam String email,
                         @RequestParam String password,
                         HttpSession session,
                         Model model) {
-        User user = userRepository.findByPhoneNumberAndPassword(phone_number, password).orElse(null);
+        User user = userRepository.findByEmailAndPassword(email, password).orElse(null);
         if (user == null) {
             model.addAttribute("error", "Sai tài khoản hoặc mật khẩu");
             return "login"; // đăng nhập sai -> quay lại login với thông báo lỗi
         }
 
         session.setAttribute("userId", user.getUser_id()); // dùng để gọi API /users/me
-        session.setAttribute("user", user.getPhone_number());     // chỉ để hiển thị tên đăng nhập
+        session.setAttribute("user", user.getEmail());     // chỉ để hiển thị tên đăng nhập
         return "redirect:/"; // chuyển hướng về /
     }
 

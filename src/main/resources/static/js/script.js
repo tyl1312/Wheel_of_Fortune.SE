@@ -75,5 +75,4 @@ closeHistoryBtn.addEventListener('click', () => {
 overlay.addEventListener('click', () => {
     missionPanel.classList.remove('visible');
     historyPanel.classList.remove('visible');
-    overlay.classList.remove('visible');
 });

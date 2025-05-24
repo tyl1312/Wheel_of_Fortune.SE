@@ -2,9 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.request.ChangePasswordRequest;
 import com.example.demo.request.UpdateUserRequest;
+import com.example.demo.service.UserService;
 import com.example.demo.dto.UserDto;
-import com.example.demo.mapper.UserMapper;
-import com.example.demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,73 +11,65 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final UserService userService;
 
     @GetMapping
-    public Iterable<UserDto> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(userMapper::toDto)
-                .toList();
+    public List<UserDto> getAllUsers() {
+        return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable int id) {
-        var user = userRepository.findById(id).orElse(null);
-        if(user == null) {
+        try {
+            return ResponseEntity.ok(userService.getUserById(id));
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto data, UriComponentsBuilder uriBuilder) {
-        var uri = uriBuilder.path("/users/{id}").buildAndExpand(data.getUser_id()).toUri();
-        return ResponseEntity.created(uri).body(data);
+        UserDto created = userService.createUser(data);
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(created.getUser_id()).toUri();
+        return ResponseEntity.created(uri).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable(name = "id") int id, @RequestBody UpdateUserRequest request) {
-        var user = userRepository.findById(id).orElse(null);
-        if(user == null) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable int id, @RequestBody UpdateUserRequest request) {
+        try {
+            return ResponseEntity.ok(userService.updateUser(id, request));
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-        userMapper.update(request, user);
-        userRepository.save(user);
-
-        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        var user = userRepository.findById(id).orElse(null);
-        if(user == null) {
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-        userRepository.delete(user);
-        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/change-password")
     public ResponseEntity<Void> changePassword(@PathVariable int id, @RequestBody ChangePasswordRequest request) {
-        var user = userRepository.findById(id).orElse(null);
-        if(user == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            userService.changePassword(id, request);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if(!user.getPassword().equals(request.getOldPassword())) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        user.setPassword(request.getNewPassword());
-        userRepository.save(user);
-
-        return ResponseEntity.noContent().build();
     }
+    // ...keep /me endpoints as needed, or move logic to service as well...
+
 
     // ✅ Thêm 2 API này để frontend gọi lấy/cập nhật user hiện tại:
     @GetMapping("/me")
@@ -87,13 +78,11 @@ public class UserController {
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        var user = userRepository.findById((int) userId).orElse(null);
-        if (user == null) {
+        try {
+            return ResponseEntity.ok(userService.getUserById((int) userId));
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-
-        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @PutMapping("/me")
@@ -102,15 +91,10 @@ public class UserController {
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        var user = userRepository.findById((int) userId).orElse(null);
-        if (user == null) {
+        try {
+            return ResponseEntity.ok(userService.updateUser((int) userId, request));
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-
-        userMapper.update(request, user);
-        userRepository.save(user);
-
-        return ResponseEntity.ok(userMapper.toDto(user));
     }
 }

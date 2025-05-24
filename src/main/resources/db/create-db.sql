@@ -3,7 +3,7 @@ Use supermarket;
 
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    phone_number VARCHAR(20) NOT NULL,
+    email VARCHAR(30) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     gender ENUM('Male', 'Female', 'Other') NOT NULL,

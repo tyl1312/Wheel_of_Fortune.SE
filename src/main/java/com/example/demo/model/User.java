@@ -16,7 +16,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private int user_id;
-    private String phone_number;
+    private String email;
     private String full_name;
     private String gender;
     private Long total_spent;
@@ -30,7 +30,7 @@ public class User {
         return getClass().getSimpleName() +
                 " (user_id=" + user_id +
                 ", full name=" + full_name +
-                ", phone number=" + phone_number +
+                ", email=" + email +
                 ", gender=" + gender +
                 ", total spent=" + total_spent +
                 ", spin=" + spin +

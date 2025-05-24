@@ -28,8 +28,6 @@ public class UserService {
     public UserDto getUserById(int user_id) {
         User user = userRepository.findById(user_id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        System.out.println(user);
-        System.out.println(userMapper.toDto(user));
         return userMapper.toDto(user);
     }
 
