@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.request;
 
 import lombok.Data;
 
@@ -6,5 +6,4 @@ import lombok.Data;
 public class UpdateUserRequest {
     private String name;
     private String email;
-    private String phone;
 }

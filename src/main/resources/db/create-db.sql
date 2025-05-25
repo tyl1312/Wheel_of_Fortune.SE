@@ -3,7 +3,7 @@ Use supermarket;
 
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    phone_number VARCHAR(20) NOT NULL,
+    email VARCHAR(30) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     gender ENUM('Male', 'Female', 'Other') NOT NULL,
@@ -61,6 +61,9 @@ CREATE TABLE user_purchase_rewards (
     UNIQUE KEY (user_id, reward_id)
 );
 
-
+-- Insert sample data into users table
+INSERT INTO `users`(`email`,`password`,`full_name`) VALUES
+('t@gmail.com','123','Miyazaki Hiagari'),
+('tung@gmail.com','123','Hoàng Đạo Thành');
 
 

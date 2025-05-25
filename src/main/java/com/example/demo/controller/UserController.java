@@ -1,19 +1,23 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ChangePasswordRequest;
-import com.example.demo.dto.UpdateUserRequest;
-import com.example.demo.dto.UserDto;
+import com.example.demo.request.ChangePasswordRequest;
+import com.example.demo.request.UpdateUserRequest;
 import com.example.demo.service.UserService;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.dto.UserDto;
+
+import jakarta.servlet.http.HttpSession;
+
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
@@ -69,6 +73,38 @@ public class UserController {
             if (e.getMessage().equals("Incorrect old password")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+    // API lấy và cập nhật user hiện tại (dùng session):
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getCurrentUser(HttpSession session) {
+        Object userId = session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Use service and handle not found gracefully
+        try {
+            return ResponseEntity.ok(userService.getUserById((int) userId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserDto> updateCurrentUser(@RequestBody UpdateUserRequest request, HttpSession session) {
+        Object userId = session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Use service and handle not found gracefully
+        try {
+            return ResponseEntity.ok(userService.updateUser((int) userId, request));
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }

@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.ChangePasswordRequest;
-import com.example.demo.dto.UpdateUserRequest;
+import com.example.demo.request.ChangePasswordRequest;
+import com.example.demo.request.UpdateUserRequest;
 import com.example.demo.dto.UserDto;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.model.User;
@@ -28,14 +28,14 @@ public class UserService {
     public UserDto getUserById(int user_id) {
         User user = userRepository.findById(user_id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        System.out.println(user);
-        System.out.println(userMapper.toDto(user));
         return userMapper.toDto(user);
     }
 
     public UserDto createUser(UserDto userDto) {
         User user = userMapper.toEntity(userDto);
+        System.out.println(user);
         User savedUser = userRepository.save(user);
+        System.out.println(userMapper.toDto(savedUser));
         return userMapper.toDto(savedUser);
     }
 

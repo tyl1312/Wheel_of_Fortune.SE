@@ -7,227 +7,189 @@
 </head>
 <body>
 
-
-<div class="header">
-    <h2>Welcome, <span th:text="${username}"></span></h2>
-    <div class="spin-container">
-        <span class="spin-number">0</span>
-        <img src="/img/ticket.png" alt="Spin" class="spin-img">
+    <div class="header">
+        <h2>Welcome, <span> <a th:href="@{/profile}" th:text="${fullName}"></a></span></h2>
+        <div class="spin-container">
+            <span class="spin-number">0</span>
+            <img src="/img/ticket.png" alt="Spin" class="spin-img">
+        </div>
     </div>
-</div>
 
-<div class="container">
-    <div class="milestone-container">
-        <div class="milestones">
-            <div class="chart-container">
-                <div class="line-container">
-                    <div class="line"></div>
-                    <div class="line left"></div>
-                </div>
+    <div class="container">
+        <div class="milestone-container">
+            <div class="milestones">
+                <div class="chart-container">
+                    <div class="line-container">
+                        <div class="line"></div>
+                        <div class="line left"></div>
+                    </div>
 
-                <div class="milestone milestone__10" data-value="10">
-                    <div class="dot">250k</div>
-                    <div class="ticket-box">
-                        <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
-                        <span class="ticket-count">1</span>
+                    <div class="milestone milestone__10" data-value="10">
+                        <div class="dot">250k</div>
+                        <div class="ticket-box">
+                            <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
+                            <span class="ticket-count">1</span>
+                        </div>
                     </div>
-                </div>
-                <div class="milestone milestone__30" data-value="30">
-                    <div class="dot">750k</div>
-                    <div class="ticket-box">
-                        <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
-                        <span class="ticket-count">2</span>
+                    <div class="milestone milestone__30" data-value="30">
+                        <div class="dot">750k</div>
+                        <div class="ticket-box">
+                            <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
+                            <span class="ticket-count">2</span>
+                        </div>
                     </div>
-                </div>
-                <div class="milestone milestone__55" data-value="55">
-                    <div class="dot">1250k</div>
-                    <div class="ticket-box">
-                        <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
-                        <span class="ticket-count">3</span>
+                    <div class="milestone milestone__55" data-value="55">
+                        <div class="dot">1250k</div>
+                        <div class="ticket-box">
+                            <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
+                            <span class="ticket-count">3</span>
+                        </div>
                     </div>
-                </div>
-                <div class="milestone milestone__80" data-value="80">
-                    <div class="dot">2000k</div>
-                    <div class="ticket-box">
-                        <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
-                        <span class="ticket-count">4</span>
+                    <div class="milestone milestone__80" data-value="80">
+                        <div class="dot">2000k</div>
+                        <div class="ticket-box">
+                            <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
+                            <span class="ticket-count">4</span>
+                        </div>
                     </div>
-                </div>
-                <div class="milestone milestone__100" data-value="100">
-                    <div class="dot">3000k</div>
-                    <div class="ticket-box">
-                        <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
-                        <span class="ticket-count">5</span>
+                    <div class="milestone milestone__100" data-value="100">
+                        <div class="dot">3000k</div>
+                        <div class="ticket-box">
+                            <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
+                            <span class="ticket-count">5</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="wheel-container">
-        <canvas id="wheel" width="400" height="400"></canvas>
-        <button id="spin" style="margin-top: 20px; padding: 10px 20px; font-size: 18px;">QUAY</button>
-    </div>
 
-
-    <div class="mission-container">
-        <div class="btn-container">
-            <img id="show-mission-btn" src="/img/paper.png" alt="Daily Missions" class="icon-btn">
-            <img id="show-history-btn" src="/img/file.png" alt="Prize History" class="icon-btn">
+        <div class="wheel-section">
+            <h2>🎉 Lucky Spin 🎉</h2>
+            <div class="wheel-container">
+                <svg id="wheel" width="400" height="400" viewBox="0 0 400 400"></svg>
+                <div class="pointer"></div>
+            </div>
+            <button id="spinButton" class="spin-btn">Spin</button>
         </div>
 
-        <div id="mission-panel" class="hidden">
-            <div class="mission-header">
-                <h3 class="daily-mission-title">Daily mission</h3>
-                <button id="close-mission-btn" class="close-btn">✕</button>
+        <div class="mission-container">
+            <div class="btn-container">
+                <img id="show-mission-btn" src="/img/paper.png" alt="Daily Missions" class="icon-btn">
+                <img id="show-history-btn" src="/img/file.png" alt="Prize History" class="icon-btn">
             </div>
-            <div class="mission-list">
-                <div class="mission-item">
-                    <div class="mission-progress">
-                        <span>0/1</span>
-                        <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                    </div>
-                    <div class="mission-description">Login the game</div>
-                    <button class="claim-btn disabled">Claim</button>
-                </div>
-                <div class="mission-item">
-                    <div class="mission-progress">
-                        <span>1/1</span>
-                        <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                    </div>
-                    <div class="mission-description">Spin one time</div>
-                    <button class="claim-btn">Claim</button>
-                </div>
-                <div class="mission-item">
-                    <div class="mission-progress">
-                        <span>0/2</span>
-                        <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                    </div>
-                    <div class="mission-description">CHƠI 2 TRẬN 5V5</div>
-                    <button class="claim-btn disabled">Claim</button>
-                </div>
-                <div class="mission-item">
-                    <div class="mission-progress">
-                        <span>0/1</span>
-                        <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                    </div>
-                    <div class="mission-description">
-                        SAO CHÉP ID DANH SÁCH PHẦN THƯỞNG CỦA BẠN
-                    </div>
-                    <button class="claim-btn disabled">Claim</button>
-                </div>
-            </div>
-            <button class="claim-all-btn">Claim all</button>
-        </div>
 
-        <div id="history-panel" class="hidden">
-            <div class="history-header">
-                <h3>Prize History</h3>
-                <button id="close-history-btn" class="close-btn">✕</button>
+            <div id="mission-panel" class="hidden">
+                <div class="mission-header">
+                    <h3 class="daily-mission-title">Daily mission</h3>
+                    <button id="close-mission-btn" class="close-btn">✕</button>
+                </div>
+                <div class="mission-list">
+
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Login the game</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>1/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Spin one time</div>
+                        <button class="claim-btn">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">
+                            Writing a review for purchased product
+                        </div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">
+                            Accumulate 100 loyalty points
+                        </div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Complete a transaction with a bill of 200,000 VND or more</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Complete a transaction with a bill of 1,000,000 VND or more</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Complete at least 3 transactions</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Complete a short survey about your shopping experience</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Apply a digital coupon from the app during checkout</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                
+                </div>
+                <button class="claim-all-btn">Claim all</button>
             </div>
-            <div class="history-body">
-                <p>You haven't received any prize yet. Spin now and claim your prize</p>
+
+            <div id="history-panel" class="hidden">
+                <div class="history-header">
+                    <h3>Prize History</h3>
+                    <button id="close-history-btn" class="close-btn">✕</button>
+                </div>
+                <div class="history-body">
+                    <p>You haven't received any prize yet. Spin now and claim your prize</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div id="overlay"></div>
+    <div id="overlay"></div>
 
-<div><button onclick="myFunction()">Click me</button></div>
+    <div id="resultPopup" class="popup">
+        <p>You won: <strong id="resultText"></strong></p>
+        <button id="closePopupBtn">Claim</button>
+    </div>
 
-<script th:src="@{/js/script.js}"></script>
+    <div><button onclick="myFunction()">Click me</button></div>
 
-<script>
-    const canvas = document.getElementById("wheel");
-    const ctx = canvas.getContext("2d");
-    const spinBtn = document.getElementById("spin");
-
-    const sectors = [
-        "100000", "200000", "500000", "1000000",
-        "Chúc may mắn"
-    ];
-
-    const colors = [
-        "#f44336", "#e91e63", "#9c27b0", "#2196f3",
-        "#4caf50", "#ff9800", "#ffeb3b", "#795548"
-    ];
-
-    const totalSectors = sectors.length;
-    const arc = 2 * Math.PI / totalSectors;
-    let angle = 0;
-    let isSpinning = false;
-
-    function drawWheel() {
-        for (let i = 0; i < totalSectors; i++) {
-            const startAngle = i * arc;
-            const endAngle = startAngle + arc;
-
-            ctx.beginPath();
-            ctx.fillStyle = colors[i];
-            ctx.moveTo(200, 200);
-            ctx.arc(200, 200, 200, startAngle, endAngle);
-            ctx.fill();
-
-            ctx.save();
-            ctx.translate(200, 200);
-            ctx.rotate(startAngle + arc / 2);
-            ctx.textAlign = "right";
-            ctx.fillStyle = "#000";
-            ctx.font = "16px Arial";
-            ctx.fillText(sectors[i], 180, 10);
-            ctx.restore();
-        }
-
-        // Mũi tên chỉ
-        ctx.beginPath();
-        ctx.moveTo(200, 0);
-        ctx.lineTo(190, 20);
-        ctx.lineTo(210, 20);
-        ctx.closePath();
-        ctx.fillStyle = "#000";
-        ctx.fill();
-    }
-
-    function rotateWheel() {
-        if (isSpinning) return;
-        isSpinning = true;
-
-        const spinAngle = Math.random() * 360 + 360 * 5;
-        const duration = 4000;
-        const start = performance.now();
-
-        function animate(now) {
-            const elapsed = now - start;
-            const progress = Math.min(elapsed / duration, 1);
-            const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-            angle = spinAngle * ease;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-            ctx.translate(200, 200);
-            ctx.rotate(angle * Math.PI / 180);
-            ctx.translate(-200, -200);
-            drawWheel();
-            ctx.restore();
-
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-            } else {
-                isSpinning = false;
-                const finalAngle = (360 - angle % 360) % 360;
-                const sectorIndex = Math.floor(finalAngle / (360 / totalSectors));
-                const result = sectors[sectorIndex];
-                alert("Chúc mừng! Bạn nhận được: " + result);
-            }
-        }
-
-        requestAnimationFrame(animate);
-    }
-
-    drawWheel();
-    spinBtn.addEventListener("click", rotateWheel);
-</script>
-
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/wheel.js}"></script>
 
 </body>
 </html>
