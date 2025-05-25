@@ -77,3 +77,10 @@ overlay.addEventListener('click', () => {
     historyPanel.classList.remove('visible');
     overlay.classList.remove('visible');
 });
+function onSpinFinished(userId) {
+    fetch("/api/spin?userId=" + userId, { method: "POST" })
+    .then(res => res.json())
+    .then(prize => {
+        alert("Bạn nhận được: " + prize.prizeDescription);
+    });
+}
