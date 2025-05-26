@@ -2,58 +2,56 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Prize;
 import com.example.demo.model.PrizeHistory;
+import com.example.demo.model.PrizeHistoryKey;
 import com.example.demo.model.User;
 import com.example.demo.repository.PrizeHistoryRepository;
 import com.example.demo.repository.PrizeRepository;
 import com.example.demo.repository.UserRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/spin")
+@RequiredArgsConstructor
+@RequestMapping("/spin")
 public class SpinController {
 
-    @Autowired
-    private PrizeRepository prizeRepository;
+    private final PrizeRepository prizeRepository;
+    private final UserRepository userRepository;
+    private final PrizeHistoryRepository prizeHistoryRepository;
 
-    @Autowired
-    private PrizeHistoryRepository prizeHistoryRepository;
+    @PostMapping("/save-result")
+    public String saveSpinResult(@RequestParam String reward, HttpSession session) {
+        Object sessionUserId = session.getAttribute("userId");
+        if (sessionUserId == null) {
+            return "User not logged in";
+        }
 
-    @Autowired
-    private UserRepository userRepository;
+        Integer userId = (Integer) sessionUserId;
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return "User not found";
+        }
 
-    @PostMapping
-    public Prize spin(@RequestParam("userId") int userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) throw new RuntimeException("User not found");
+        Prize prize = prizeRepository.findByPrizeDescription(reward).orElse(null);
+        if (prize == null) {
+            return "Prize not found: " + reward;
+        }
 
-        User user = optionalUser.get();
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
 
-        List<Prize> prizes = prizeRepository.findAll();
-        Prize result = selectPrize(prizes);
-
-        // Lưu lịch sử
+        PrizeHistoryKey key = new PrizeHistoryKey(user.getUser_id(), prize.getPrizeId(), now);
         PrizeHistory history = new PrizeHistory();
+        history.setId(key);
         history.setUser(user);
-        history.setPrize(result);
-        history.setWonAt(new Timestamp(System.currentTimeMillis()));
+        history.setPrize(prize);
+
         prizeHistoryRepository.save(history);
 
-        return result;
+        return "Saved prize: " + prize.getPrizeName();
     }
 
-    private Prize selectPrize(List<Prize> prizes) {
-        double rand = Math.random();
-        double cumulative = 0.0;
-        for (Prize p : prizes) {
-            cumulative += p.getPrizeProbability(); // Đã sửa đúng tên hàm
-            if (rand <= cumulative) return p;
-        }
-        return prizes.get(prizes.size() - 1); // fallback
-    }
 }

@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
     drawWheel();
 
     // Event Listeners
-
     spinButton.addEventListener('click', spinWheel);
     closePopupBtn.addEventListener('click', closePopup);
 
@@ -31,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Lucky Wheel Functions
     function drawWheel() {
         const centerX = 200;
         const centerY = 200;
@@ -85,10 +83,12 @@ document.addEventListener('DOMContentLoaded', function () {
             let index = Math.floor(pointerAngle / segmentAngle);
             if (index >= segmentCount) index = 0;
 
-            if (rewards[index] === "Better luck next time!") {
+            const result = rewards[index];
+
+            if (result === "Better luck next time!") {
                 resultText.innerText = "Better luck next time!";
             } else {
-                resultText.innerText = rewards[index];
+                resultText.innerText = result;
                 confetti({
                     particleCount: 100,
                     spread: 70,
@@ -96,10 +96,36 @@ document.addEventListener('DOMContentLoaded', function () {
                     colors: ["#ff0000", "#00ff00", "#0000ff", "#ffff00"],
                 });
             }
+
+            // 👉 Gọi API để lưu kết quả
+            saveResultToServer(result);
+
             resultPopup.style.display = "block";
             overlay.classList.add('visible');
             spinButton.disabled = false;
         }, 4200);
+    }
+
+    // 👉 Hàm gọi API lưu kết quả về server
+    function saveResultToServer(reward) {
+        fetch("/spin/save-result", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                reward: reward
+            })
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log("Server response:", data);
+            // Nếu muốn có thể hiển thị thông báo:
+            // alert(data);
+        })
+        .catch(error => {
+            console.error("Lỗi khi lưu kết quả:", error);
+        });
     }
 
     function closePopup() {

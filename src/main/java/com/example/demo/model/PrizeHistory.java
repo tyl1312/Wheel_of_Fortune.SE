@@ -1,59 +1,25 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-
-import java.sql.Timestamp;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "prize_history")
+@Getter
+@Setter
 public class PrizeHistory {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // Khóa chính tự động
+    @EmbeddedId
+    private PrizeHistoryKey id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @MapsId("userId") // ánh xạ userId từ EmbeddedId
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "prize_id", nullable = false)
+    @MapsId("prizeId") // ánh xạ prizeId từ EmbeddedId
+    @JoinColumn(name = "prize_id")
     private Prize prize;
-
-    @Column(name = "won_at")
-    private Timestamp wonAt;
-
-    // --- Getters ---
-    public Long getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Prize getPrize() {
-        return prize;
-    }
-
-    public Timestamp getWonAt() {
-        return wonAt;
-    }
-
-    // --- Setters ---
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setPrize(Prize prize) {
-        this.prize = prize;
-    }
-
-    public void setWonAt(Timestamp wonAt) {
-        this.wonAt = wonAt;
-    }
 }
