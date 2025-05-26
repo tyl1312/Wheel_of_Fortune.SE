@@ -66,6 +66,7 @@ closeMissionBtn.addEventListener('click', () => {
 });
 
 showHistoryBtn.addEventListener('click', () => {
+    fetchPrizeHistory();
     historyPanel.classList.add('visible');
     overlay.classList.add('visible');
 });
@@ -85,4 +86,29 @@ overlay.addEventListener('click', () => {
         overlay.classList.remove('visible');
     }
 });
+
+function fetchPrizeHistory() {
+    fetch("/spin/history")
+        .then(response => response.json())
+        .then(data => {
+            const historyList = document.getElementById("history-list");
+            const noHistoryText = document.getElementById("no-history-text");
+            historyList.innerHTML = "";
+
+            if (data.length === 0) {
+                noHistoryText.style.display = "block";
+            } else {
+                noHistoryText.style.display = "none";
+                data.forEach(entry => {
+                    const li = document.createElement("li");
+                    li.textContent = `${entry.prizeName} - ${new Date(entry.timestamp).toLocaleString()}`;
+                    historyList.appendChild(li);
+                });
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching prize history:", error);
+        });
+}
+
 
