@@ -161,7 +161,7 @@
                         <div class="mission-description">Apply a digital coupon from the app during checkout</div>
                         <button class="claim-btn disabled">Claim</button>
                     </div>
-                
+
                 </div>
                 <button class="claim-all-btn">Claim all</button>
             </div>
@@ -171,8 +171,22 @@
                     <h3>Prize History</h3>
                     <button id="close-history-btn" class="close-btn">✕</button>
                 </div>
-                <div class="history-body">
-                    <p>You haven't received any prize yet. Spin now and claim your prize</p>
+                <div class="history-body" id="history-body">
+                    <div class="history-scroll-wrapper">
+                        <table class="history-table">
+                            <thead>
+                            <tr>
+                                <th>Prize</th>
+                                <th>Time</th>
+                            </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                    <p id="no-history-text" style="text-align: center; margin-top: 10px;">
+                        You haven't received any prize yet. Spin now and claim your prize
+                    </p>
                 </div>
             </div>
         </div>

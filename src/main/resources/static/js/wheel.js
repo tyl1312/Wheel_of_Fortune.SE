@@ -97,7 +97,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
 
-            // 👉 Gọi API để lưu kết quả
             saveResultToServer(result);
 
             resultPopup.style.display = "block";
@@ -106,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 4200);
     }
 
-    // 👉 Hàm gọi API lưu kết quả về server
     function saveResultToServer(reward) {
         fetch("/spin/save-result", {
             method: "POST",
@@ -120,11 +118,9 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.text())
         .then(data => {
             console.log("Server response:", data);
-            // Nếu muốn có thể hiển thị thông báo:
-            // alert(data);
         })
         .catch(error => {
-            console.error("Lỗi khi lưu kết quả:", error);
+            console.error("Error save result:", error);
         });
     }
 
@@ -133,3 +129,50 @@ document.addEventListener('DOMContentLoaded', function () {
         overlay.classList.remove('visible');
     }
 });
+
+function updateHistoryTable(historyList) {
+    const tbody = document.getElementById("history-table-body");
+    const noHistoryText = document.getElementById("no-history-text");
+
+    // Clear existing rows
+    tbody.innerHTML = "";
+
+    if (!historyList || historyList.length === 0) {
+        noHistoryText.style.display = "block";
+        return;
+    }
+
+    noHistoryText.style.display = "none";
+
+    historyList.forEach(item => {
+        const row = document.createElement("tr");
+
+        const prizeCell = document.createElement("td");
+        prizeCell.textContent = item.prizeName || "Unknown";
+
+        const timeCell = document.createElement("td");
+        const time = new Date(item.timestamp);
+        timeCell.textContent = isNaN(time.getTime()) ? "Invalid time" : time.toLocaleString();
+
+        row.appendChild(prizeCell);
+        row.appendChild(timeCell);
+        tbody.appendChild(row);
+    });
+}
+
+
+// Gọi API khi mở lịch sử quay
+document.getElementById("show-history-btn").addEventListener("click", () => {
+    fetch('/spin/history')  // ← đúng endpoint
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch prize history.");
+            }
+            return response.json();
+        })
+        .then(data => updateHistoryTable(data))
+        .catch(error => {
+            console.error("Error loading prize history:", error);
+        });
+});
+
