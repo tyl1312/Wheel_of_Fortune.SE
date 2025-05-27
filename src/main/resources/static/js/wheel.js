@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
     spinButton.addEventListener('click', spinWheel);
     closePopupBtn.addEventListener('click', closePopup);
 
-    // Lucky Wheel Functions
     function drawWheel() {
         const centerX = 200;
         const centerY = 200;
@@ -140,13 +139,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 reward: reward
             })
         })
-            .then(response => response.text())
-            .then(data => {
-                console.log("Server response:", data);
-            })
-            .catch(error => {
-                console.error("Error save result:", error);
-            });
+        .then(response => response.text())
+        .then(data => {
+            console.log("Server response:", data);
+        })
+        .catch(error => {
+            console.error("Error save result:", error);
+        });
     }
 
     function closePopup() {
