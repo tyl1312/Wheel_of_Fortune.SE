@@ -42,6 +42,7 @@ public class UserService {
     public UserDto updateUser(int user_id, UpdateUserRequest request) {
         User user = userRepository.findById(user_id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        
         userMapper.update(request, user);
         User updated = userRepository.save(user);
         return userMapper.toDto(updated);

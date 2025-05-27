@@ -1,17 +1,26 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.UserDto;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
+import com.example.demo.model.PurchaseReward;
+import com.example.demo.repository.PurchaseRewardRepository;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
     private final UserRepository userRepository;
+    private final UserService userService;
+    private final PurchaseRewardRepository purchaseRewardRepository;
 
     @GetMapping("/login")
     public String loginForm() {
@@ -29,9 +38,9 @@ public class HomeController {
             return "login";
         }
 
-        if (!password.matches(user.getPassword())) {
+        if (!password.equals(user.getPassword())) {
             model.addAttribute("error", "Wrong email or password");
-            return "redirect:/login";
+            return "/login";
         }
 
         // Store user info in session
@@ -59,7 +68,7 @@ public class HomeController {
 
         if (userRepository.findByEmail(email).isPresent()) {
             model.addAttribute("error", "Email already in use");
-            return "redirect:/register";
+            return "/register";
         }
 
         User user = new User();
@@ -78,20 +87,25 @@ public class HomeController {
         return "redirect:/";
     }
 
-    @GetMapping("/")
-    public String index(HttpSession session, Model model) {
-        Object email = session.getAttribute("email");
-        if (email == null) {
-            return "redirect:/login";
-        }
-        model.addAttribute("email", email);
-        model.addAttribute("fullName", session.getAttribute("fullName"));
-        return "index";
-    }
-
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/login";
+    }
+
+    @GetMapping("/")
+    public String index(Model model, HttpSession session) {
+        Object userId = session.getAttribute("userId");
+        if (userId != null) {
+            UserDto user = userService.getUserById((int) userId);
+            model.addAttribute("fullName", user.getFull_name());
+            model.addAttribute("spin", user.getSpin());  
+            model.addAttribute("totalSpent", user.getTotal_spent());
+        }
+
+        List<PurchaseReward> rewards = purchaseRewardRepository.findAllByOrderByRewardIdAsc();
+        model.addAttribute("purchaseRewards", rewards);
+
+        return "index";
     }
 }

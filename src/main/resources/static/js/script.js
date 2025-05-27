@@ -1,11 +1,65 @@
-//Transition for the progress bar
+//DOM Elements
 const progress = document.getElementsByClassName("line left")[0]
-const milestones = document.querySelectorAll(".milestone")
-let value = 0
-function myFunction() {
-    value = Math.min(100, value + 10); // prevent going over 100%
-    progress.style.height = value + '%';
-    progress.style.bottom = '0'; // make sure it grows from bottom
+const milestones = document.querySelectorAll('.milestone');
+
+const showMissionBtn = document.getElementById('show-mission-btn');
+const closeMissionBtn = document.getElementById('close-mission-btn');
+const missionPanel = document.getElementById('mission-panel');
+
+const showHistoryBtn = document.getElementById('show-history-btn');
+const closeHistoryBtn = document.getElementById('close-history-btn');
+const historyPanel = document.getElementById('history-panel');
+const overlay = document.getElementById('overlay');
+
+document.addEventListener('DOMContentLoaded', function() {
+    const totalSpent = document.body.getAttribute('total-spent');
+    const maxSpent = 3000000; // 3000k
+    value = Math.min(100, (totalSpent / maxSpent) * 100);
+    updateProgressBar(value); 
+
+    document.querySelectorAll('.ticket-box').forEach(function(box) {
+        box.addEventListener('click', function() {
+            if (this.classList.contains('revealed') && !this.classList.contains('claimed')) {
+                const ticketCount = parseInt(this.querySelector('.ticket-count').textContent, 10);
+                const milestone = this.closest('.milestone');
+                const requiredValue = parseInt(milestone.getAttribute('data-value'));
+                const currentProgress = (totalSpent / maxSpent) * 100;
+
+                if (currentProgress >= requiredValue) {
+                    const spinNumberElement = document.querySelector('.spin-number');
+                    const currentSpinNumber = parseInt(spinNumberElement.textContent, 10);
+                    const newSpinNumber = currentSpinNumber + ticketCount;
+                    spinNumberElement.textContent = newSpinNumber;
+
+                    this.classList.add('claimed');
+
+                    fetch('/users/me', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            spin: newSpinNumber
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to update');
+                        return response.json();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        spinNumberElement.textContent = currentSpinNumber;
+                        this.classList.remove('claimed');
+                    });
+                }
+            }
+        });
+    });
+});
+
+function updateProgressBar(value) {
+    progress.style.height = `${value}%`;
+    progress.style.bottom = '0';
     progress.style.backgroundColor = getComputedStyle(document.documentElement)
         .getPropertyValue('--milestone-color').trim();
 
@@ -24,33 +78,7 @@ function myFunction() {
     });
 }
 
-//Add ticket count to spin number
-document.querySelectorAll('.ticket-box').forEach(function (box) {
-    box.addEventListener('click', function () {
-        if (this.classList.contains('revealed')) {
-            const ticketCount = parseInt(this.querySelector('.ticket-count').textContent, 10);
-
-            const spinNumberElement = document.querySelector('.spin-number');
-            const currentSpinNumber = parseInt(spinNumberElement.textContent, 10);
-            const newSpinNumber = currentSpinNumber + ticketCount;
-
-            spinNumberElement.textContent = newSpinNumber;
-
-            this.classList.add('clicked');
-        }
-    });
-});
-
-
 // Show and hide the mission and history panel
-const showMissionBtn = document.getElementById('show-mission-btn');
-const closeMissionBtn = document.getElementById('close-mission-btn');
-const missionPanel = document.getElementById('mission-panel');
-
-const showHistoryBtn = document.getElementById('show-history-btn');
-const closeHistoryBtn = document.getElementById('close-history-btn');
-const historyPanel = document.getElementById('history-panel');
-const overlay = document.getElementById('overlay');
 
 showMissionBtn.addEventListener('click', () => {
     missionPanel.classList.add('visible');

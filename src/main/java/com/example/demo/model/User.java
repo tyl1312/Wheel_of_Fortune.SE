@@ -20,6 +20,7 @@ public class User {
     private String email;
     private String full_name;
     private String gender;
+    @Builder.Default
     private Long total_spent = 0L;
     private int spin;
 

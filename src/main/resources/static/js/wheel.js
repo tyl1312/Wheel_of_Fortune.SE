@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const spinButton = document.getElementById("spinButton");
     const resultText = document.getElementById("resultText");
     const resultPopup = document.getElementById("resultPopup");
+    const closePopupBtn = document.getElementById("closePopupBtn");
     const overlay = document.getElementById('overlay');
 
     // Lucky Wheel Variables
@@ -21,14 +22,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Event Listeners
     spinButton.addEventListener('click', spinWheel);
     closePopupBtn.addEventListener('click', closePopup);
-
-    prizes.forEach(prize => {
-        prize.addEventListener('click', function () {
-            if (this.classList.contains('revealed')) {
-                alert("Prize granted!");
-            }
-        });
-    });
 
     // Lucky Wheel Functions
     function drawWheel() {
@@ -73,10 +66,41 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function spinWheel() {
+        const spinNumberElement = document.querySelector('.spin-number');
+        const currentSpins = parseInt(spinNumberElement.textContent);
+
+        if (currentSpins <= 0) {
+            alert('You have no spins remaining!');
+            return;
+        }
+
         spinButton.disabled = true;
         const randomSpin = 720 + Math.random() * 360;
         angleSoFar += randomSpin;
         wheel.style.transform = `rotate(${angleSoFar}deg)`;
+
+        const newSpinCount = currentSpins - 1;
+        spinNumberElement.textContent = newSpinCount;
+
+        fetch(`/users/me`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                spin: newSpinCount
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to update spins');
+                }
+                return response.json();
+            })
+            .catch(error => {
+                console.error("Error updating spins:", error);
+                spinNumberElement.textContent = currentSpins;
+            });
 
         setTimeout(() => {
             const finalAngle = angleSoFar % 360;
@@ -116,13 +140,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 reward: reward
             })
         })
-        .then(response => response.text())
-        .then(data => {
-            console.log("Server response:", data);
-        })
-        .catch(error => {
-            console.error("Error save result:", error);
-        });
+            .then(response => response.text())
+            .then(data => {
+                console.log("Server response:", data);
+            })
+            .catch(error => {
+                console.error("Error save result:", error);
+            });
     }
 
     function closePopup() {

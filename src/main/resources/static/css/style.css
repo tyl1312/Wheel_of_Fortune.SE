@@ -126,10 +126,13 @@ body {
     border: 2px solid gold;
     cursor: pointer;
 }
-.ticket-box.clicked {
-    opacity: 0.5; /* Dim the box */
-    pointer-events: none; /* Disable pointer events */
-    cursor: not-allowed; /* Change the cursor to indicate it's unclickable */
+.ticket-box.claimed {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.ticket-box.revealed:not(.claimed):hover {
+    cursor: pointer;
 }
 .ticket-count {
     position: absolute;
@@ -280,7 +283,6 @@ body {
         transform: translate(-50%, -30%);
     }
 }
-
 
 /*Mission container*/
 .mission-container{
@@ -512,7 +514,7 @@ body {
     color: #ffcccc;
 }
 
-<style>
+
 #history-body {
     padding: 0 20px 20px 20px;
     display: flex;
@@ -554,4 +556,4 @@ body {
     background-color: rgba(255, 255, 255, 0.2);
     font-weight: bold;
 }
-</style>
+
