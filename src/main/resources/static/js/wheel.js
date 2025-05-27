@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
     drawWheel();
 
     // Event Listeners
-
     spinButton.addEventListener('click', spinWheel);
     closePopupBtn.addEventListener('click', closePopup);
 
@@ -85,10 +84,12 @@ document.addEventListener('DOMContentLoaded', function () {
             let index = Math.floor(pointerAngle / segmentAngle);
             if (index >= segmentCount) index = 0;
 
-            if (rewards[index] === "Better luck next time!") {
+            const result = rewards[index];
+
+            if (result === "Better luck next time!") {
                 resultText.innerText = "Better luck next time!";
             } else {
-                resultText.innerText = rewards[index];
+                resultText.innerText = result;
                 confetti({
                     particleCount: 100,
                     spread: 70,
@@ -96,10 +97,32 @@ document.addEventListener('DOMContentLoaded', function () {
                     colors: ["#ff0000", "#00ff00", "#0000ff", "#ffff00"],
                 });
             }
+
+            saveResultToServer(result);
+
             resultPopup.style.display = "block";
             overlay.classList.add('visible');
             spinButton.disabled = false;
         }, 4200);
+    }
+
+    function saveResultToServer(reward) {
+        fetch("/spin/save-result", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                reward: reward
+            })
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log("Server response:", data);
+        })
+        .catch(error => {
+            console.error("Error save result:", error);
+        });
     }
 
     function closePopup() {
@@ -107,3 +130,50 @@ document.addEventListener('DOMContentLoaded', function () {
         overlay.classList.remove('visible');
     }
 });
+
+function updateHistoryTable(historyList) {
+    const tbody = document.getElementById("history-table-body");
+    const noHistoryText = document.getElementById("no-history-text");
+
+    // Clear existing rows
+    tbody.innerHTML = "";
+
+    if (!historyList || historyList.length === 0) {
+        noHistoryText.style.display = "block";
+        return;
+    }
+
+    noHistoryText.style.display = "none";
+
+    historyList.forEach(item => {
+        const row = document.createElement("tr");
+
+        const prizeCell = document.createElement("td");
+        prizeCell.textContent = item.prizeName || "Unknown";
+
+        const timeCell = document.createElement("td");
+        const time = new Date(item.timestamp);
+        timeCell.textContent = isNaN(time.getTime()) ? "Invalid time" : time.toLocaleString();
+
+        row.appendChild(prizeCell);
+        row.appendChild(timeCell);
+        tbody.appendChild(row);
+    });
+}
+
+
+// Gọi API khi mở lịch sử quay
+document.getElementById("show-history-btn").addEventListener("click", () => {
+    fetch('/spin/history')  // ← đúng endpoint
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch prize history.");
+            }
+            return response.json();
+        })
+        .then(data => updateHistoryTable(data))
+        .catch(error => {
+            console.error("Error loading prize history:", error);
+        });
+});
+

@@ -1,16 +1,6 @@
-//DOM Element
+//Transition for the progress bar
 const progress = document.getElementsByClassName("line left")[0]
 const milestones = document.querySelectorAll(".milestone")
-const showMissionBtn = document.getElementById('show-mission-btn');
-const closeMissionBtn = document.getElementById('close-mission-btn');
-const missionPanel = document.getElementById('mission-panel');
-
-const showHistoryBtn = document.getElementById('show-history-btn');
-const closeHistoryBtn = document.getElementById('close-history-btn');
-const historyPanel = document.getElementById('history-panel');
-const overlay = document.getElementById('overlay');
-
-//Transition for the progress bar
 let value = 0
 function myFunction() {
     value = Math.min(100, value + 10); // prevent going over 100%
@@ -53,7 +43,14 @@ document.querySelectorAll('.ticket-box').forEach(function (box) {
 
 
 // Show and hide the mission and history panel
+const showMissionBtn = document.getElementById('show-mission-btn');
+const closeMissionBtn = document.getElementById('close-mission-btn');
+const missionPanel = document.getElementById('mission-panel');
 
+const showHistoryBtn = document.getElementById('show-history-btn');
+const closeHistoryBtn = document.getElementById('close-history-btn');
+const historyPanel = document.getElementById('history-panel');
+const overlay = document.getElementById('overlay');
 
 showMissionBtn.addEventListener('click', () => {
     missionPanel.classList.add('visible');
@@ -66,6 +63,7 @@ closeMissionBtn.addEventListener('click', () => {
 });
 
 showHistoryBtn.addEventListener('click', () => {
+    fetchPrizeHistory();
     historyPanel.classList.add('visible');
     overlay.classList.add('visible');
 });
@@ -85,4 +83,29 @@ overlay.addEventListener('click', () => {
         overlay.classList.remove('visible');
     }
 });
+
+function fetchPrizeHistory() {
+    fetch("/spin/history")
+        .then(response => response.json())
+        .then(data => {
+            const historyList = document.getElementById("history-list");
+            const noHistoryText = document.getElementById("no-history-text");
+            historyList.innerHTML = "";
+
+            if (data.length === 0) {
+                noHistoryText.style.display = "block";
+            } else {
+                noHistoryText.style.display = "none";
+                data.forEach(entry => {
+                    const li = document.createElement("li");
+                    li.textContent = `${entry.prizeName} - ${new Date(entry.timestamp).toLocaleString()}`;
+                    historyList.appendChild(li);
+                });
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching prize history:", error);
+        });
+}
+
 

@@ -161,7 +161,94 @@
                         <div class="mission-description">Apply a digital coupon from the app during checkout</div>
                         <button class="claim-btn disabled">Claim</button>
                     </div>
-                
+
+                </div>
+                <button class="claim-all-btn">Claim all</button>
+            </div>
+            <div id="mission-panel" class="hidden">
+                <div class="mission-header">
+                    <h3 class="daily-mission-title">Daily mission</h3>
+                    <button id="close-mission-btn" class="close-btn">✕</button>
+                </div>
+                <div class="mission-list">
+
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Login the game</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>1/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Spin one time</div>
+                        <button class="claim-btn">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">
+                            Writing a review for purchased product
+                        </div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">
+                            Accumulate 100 loyalty points
+                        </div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Complete a transaction with a bill of 200,000 VND or more</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Complete a transaction with a bill of 1,000,000 VND or more</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Complete at least 3 transactions</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Complete a short survey about your shopping experience</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+                    <div class="mission-item">
+                        <div class="mission-progress">
+                            <span>0/1</span>
+                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                        </div>
+                        <div class="mission-description">Apply a digital coupon from the app during checkout</div>
+                        <button class="claim-btn disabled">Claim</button>
+                    </div>
+
                 </div>
                 <button class="claim-all-btn">Claim all</button>
             </div>
@@ -171,25 +258,32 @@
                     <h3>Prize History</h3>
                     <button id="close-history-btn" class="close-btn">✕</button>
                 </div>
-                <div class="history-body">
-                    <p>You haven't received any prize yet. Spin now and claim your prize</p>
+                <div class="history-body" id="history-body">
+                    <div class="history-scroll-wrapper">
+                        <table class="history-table">
+                            <thead>
+                            <tr>
+                                <th>Prize</th>
+                                <th>Time</th>
+                            </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                    <p id="no-history-text" style="text-align: center; margin-top: 10px;">
+                        You haven't received any prize yet. Spin now and claim your prize
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="overlay"></div>
+<div id="overlay"></div>
 
-    <div id="resultPopup" class="popup">
-        <p>You won: <strong id="resultText"></strong></p>
-        <button id="closePopupBtn">Claim</button>
-    </div>
+<div><button onclick="myFunction()">Click me</button></div>
 
-    <div><button onclick="myFunction()">Click me</button></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script th:src="@{/js/script.js}"></script>
-    <script th:src="@{/js/wheel.js}"></script>
+<script th:src="@{/js/script.js}"></script>
 
 </body>
 </html>
