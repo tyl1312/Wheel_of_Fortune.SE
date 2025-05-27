@@ -20,6 +20,7 @@
         <div class="milestone-container">
             <div class="milestones">
                 <div class="chart-container">
+
                     <div class="line-container">
                         <div class="line"></div>
                         <div class="line left"></div>
@@ -27,9 +28,10 @@
 
                     <div th:each="reward, stat : ${purchaseRewards}"
                         th:class="${'milestone milestone__' + reward.threshold/30000}"
-                        th:data-value="${reward.threshold/30000}">
+                        th:data-value="${reward.threshold/30000}" th:data-reward-id="${reward.rewardId}">
                         <div class="dot" th:text="${reward.threshold + 'k'}">250k</div>
-                        <div class="ticket-box">
+                        <div class="ticket-box"
+                            th:classappend="${claimedRewards != null and claimedRewards.?[rewardId == __${reward.rewardId}__].size() > 0} ? 'claimed' : ''">
                             <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
                             <span class="ticket-count" th:text="${reward.spin}">1</span>
                         </div>
@@ -55,89 +57,46 @@
 
             <div id="mission-panel" class="hidden">
                 <div class="mission-header">
-                    <h3 class="daily-mission-title">Daily mission</h3>
+                    <h3 class="daily-mission-title">Missions</h3>
                     <button id="close-mission-btn" class="close-btn">✕</button>
                 </div>
-                <div class="mission-list">
+                <div class="mission-section">
+                    <h4 class="mission-section-title">Daily Missions</h4>
+                    <div class="mission-list" id="daily-missions">
+                        <div th:each="mission : ${dailyMissions}" class="mission-item">
+                            <div class="mission-progress">
+                                <span
+                                    th:text="${userMissions != null and userMissions.?[missionId == __${mission.missionId}__ and isCompleted].size() > 0 ? '1/1' : '0/1'}">0/1</span>
+                                <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                            </div>
+                            <div class="mission-description" th:text="${mission.missionDescription}"></div>
+                            <button class="claim-btn"
+                                th:classappend="${userMissions != null and userMissions.?[missionId == __${mission.missionId}__ and isCompleted].size() > 0 ? '' : 'disabled'}"
+                                th:data-mission-id="${mission.missionId}" th:data-mission-type="DAILY">
+                                Claim
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="mission-item">
-                        <div class="mission-progress">
-                            <span>0/1</span>
-                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                <!-- One-time Missions -->
+                <div class="mission-section">
+                    <h4 class="mission-section-title">Achievement Missions</h4>
+                    <div class="mission-list" id="one-time-missions">
+                        <div th:each="mission : ${oneTimeMissions}" class="mission-item">
+                            <div class="mission-progress">
+                                <span
+                                    th:text="${userMissions != null and userMissions.?[missionId == __${mission.missionId}__ and isCompleted].size() > 0 ? '1/1' : '0/1'}">0/1</span>
+                                <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                            </div>
+                            <div class="mission-description" th:text="${mission.missionDescription}"></div>
+                            <button class="claim-btn"
+                                th:classappend="${userMissions != null and userMissions.?[missionId == __${mission.missionId}__ and isCompleted].size() > 0 ? '' : 'disabled'}"
+                                th:data-mission-id="${mission.missionId}" th:data-mission-type="ONE_TIME">
+                                Claim
+                            </button>
                         </div>
-                        <div class="mission-description">Login the game</div>
-                        <button class="claim-btn disabled">Claim</button>
                     </div>
-                    <div class="mission-item">
-                        <div class="mission-progress">
-                            <span>1/1</span>
-                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                        </div>
-                        <div class="mission-description">Spin one time</div>
-                        <button class="claim-btn">Claim</button>
-                    </div>
-                    <div class="mission-item">
-                        <div class="mission-progress">
-                            <span>0/1</span>
-                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                        </div>
-                        <div class="mission-description">
-                            Writing a review for purchased product
-                        </div>
-                        <button class="claim-btn disabled">Claim</button>
-                    </div>
-                    <div class="mission-item">
-                        <div class="mission-progress">
-                            <span>0/1</span>
-                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                        </div>
-                        <div class="mission-description">
-                            Accumulate 100 loyalty points
-                        </div>
-                        <button class="claim-btn disabled">Claim</button>
-                    </div>
-                    <div class="mission-item">
-                        <div class="mission-progress">
-                            <span>0/1</span>
-                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                        </div>
-                        <div class="mission-description">Complete a transaction with a bill of 200,000 VND or more</div>
-                        <button class="claim-btn disabled">Claim</button>
-                    </div>
-                    <div class="mission-item">
-                        <div class="mission-progress">
-                            <span>0/1</span>
-                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                        </div>
-                        <div class="mission-description">Complete a transaction with a bill of 1,000,000 VND or more
-                        </div>
-                        <button class="claim-btn disabled">Claim</button>
-                    </div>
-                    <div class="mission-item">
-                        <div class="mission-progress">
-                            <span>0/1</span>
-                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                        </div>
-                        <div class="mission-description">Complete at least 3 transactions</div>
-                        <button class="claim-btn disabled">Claim</button>
-                    </div>
-                    <div class="mission-item">
-                        <div class="mission-progress">
-                            <span>0/1</span>
-                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                        </div>
-                        <div class="mission-description">Complete a short survey about your shopping experience</div>
-                        <button class="claim-btn disabled">Claim</button>
-                    </div>
-                    <div class="mission-item">
-                        <div class="mission-progress">
-                            <span>0/1</span>
-                            <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
-                        </div>
-                        <div class="mission-description">Apply a digital coupon from the app during checkout</div>
-                        <button class="claim-btn disabled">Claim</button>
-                    </div>
-
                 </div>
                 <button class="claim-all-btn">Claim all</button>
             </div>

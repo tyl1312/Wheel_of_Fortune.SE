@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -76,6 +77,27 @@ public class UserController {
         }
     }
 
+    @PostMapping("/claim-purchase-reward")
+    public ResponseEntity<?> claimReward(@RequestBody Map<String, Integer> request, HttpSession session) {
+        Object userId = session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Integer rewardId = request.get("rewardId");
+        if (rewardId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            UserDto updatedUser = userService.claimPurchaseReward((int) userId, rewardId);
+            return ResponseEntity.ok(updatedUser);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Reward already claimed");
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     // API lấy và cập nhật user hiện tại (dùng session):
     @GetMapping("/me")
@@ -100,7 +122,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // Use service and handle not found gracefully
         try {
             return ResponseEntity.ok(userService.updateUser((int) userId, request));
         } catch (RuntimeException e) {

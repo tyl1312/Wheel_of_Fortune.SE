@@ -28,9 +28,9 @@ CREATE TABLE prize_history (
 
 CREATE TABLE missions (
     mission_id INT AUTO_INCREMENT PRIMARY KEY,
-    mission_description TEXT,
-    spin_reward INT DEFAULT 1,              
-    is_active BOOLEAN DEFAULT TRUE          
+    mission_description TEXT NOT NULL,
+    spin_reward INT DEFAULT 1,
+    mission_type ENUM('DAILY', 'ONE_TIME') NOT NULL
 );
 
 CREATE TABLE user_missions (
@@ -41,7 +41,7 @@ CREATE TABLE user_missions (
 
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
 	FOREIGN KEY (mission_id) REFERENCES missions(mission_id) ON DELETE CASCADE,
-    UNIQUE KEY (user_id, mission_id, mission_date)  -- One mission per user per day
+    UNIQUE KEY (user_id, mission_id, mission_date)  
 );
 
 CREATE TABLE purchase_rewards (

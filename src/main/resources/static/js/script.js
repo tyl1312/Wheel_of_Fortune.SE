@@ -11,47 +11,44 @@ const closeHistoryBtn = document.getElementById('close-history-btn');
 const historyPanel = document.getElementById('history-panel');
 const overlay = document.getElementById('overlay');
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const totalSpent = document.body.getAttribute('total-spent');
     const maxSpent = 3000000; // 3000k
     value = Math.min(100, (totalSpent / maxSpent) * 100);
-    updateProgressBar(value); 
+    updateProgressBar(value);
 
-    document.querySelectorAll('.ticket-box').forEach(function(box) {
-        box.addEventListener('click', function() {
+    document.querySelectorAll('.ticket-box').forEach(function (box) {
+        box.addEventListener('click', function () {
             if (this.classList.contains('revealed') && !this.classList.contains('claimed')) {
-                const ticketCount = parseInt(this.querySelector('.ticket-count').textContent, 10);
                 const milestone = this.closest('.milestone');
-                const requiredValue = parseInt(milestone.getAttribute('data-value'));
-                const currentProgress = (totalSpent / maxSpent) * 100;
+                const rewardId = milestone.dataset.rewardId;
+                const ticketCount = parseInt(this.querySelector('.ticket-count').textContent, 10);
 
-                if (currentProgress >= requiredValue) {
-                    const spinNumberElement = document.querySelector('.spin-number');
-                    const currentSpinNumber = parseInt(spinNumberElement.textContent, 10);
-                    const newSpinNumber = currentSpinNumber + ticketCount;
-                    spinNumberElement.textContent = newSpinNumber;
-
-                    this.classList.add('claimed');
-
-                    fetch('/users/me', {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            spin: newSpinNumber
-                        })
-                    })
+                fetch('/users/claim-purchase-reward', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ rewardId: rewardId })
+                })
                     .then(response => {
-                        if (!response.ok) throw new Error('Failed to update');
+                        if (!response.ok) {
+                            if (response.status === 409) {
+                                throw new Error('Reward already claimed');
+                            }
+                            throw new Error('Failed to claim reward');
+                        }
                         return response.json();
                     })
+                    .then(data => {
+                        this.classList.add('claimed');
+                        const spinNumberElement = document.querySelector('.spin-number');
+                        const currentSpins = parseInt(spinNumberElement.textContent, 10);
+                        spinNumberElement.textContent = currentSpins + ticketCount;
+                    })
                     .catch(error => {
-                        console.error('Error:', error);
-                        spinNumberElement.textContent = currentSpinNumber;
-                        this.classList.remove('claimed');
+                        alert(error.message);
                     });
-                }
             }
         });
     });
