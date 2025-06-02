@@ -34,6 +34,7 @@ CREATE TABLE missions (
 );
 
 CREATE TABLE user_missions (
+    id int AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     mission_id INT NOT NULL,
     mission_date DATE NOT NULL,

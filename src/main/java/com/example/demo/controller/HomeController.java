@@ -1,18 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.UserDto;
-import com.example.demo.model.User;
-import com.example.demo.model.UserPurchaseReward;
-import com.example.demo.repository.UserPurchaseRewardRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.service.UserService;
-import com.example.demo.model.PurchaseReward;
-import com.example.demo.repository.PurchaseRewardRepository;
-import com.example.demo.model.Mission;
-import com.example.demo.model.MissionType;
-import com.example.demo.model.UserMission;
-import com.example.demo.repository.MissionRepository;
-import com.example.demo.repository.UserMissionRepository;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +22,8 @@ public class HomeController {
     private final PurchaseRewardRepository purchaseRewardRepository;
     private final UserPurchaseRewardRepository userPurchaseRewardRepository;
     private final MissionRepository missionRepository;
-    private final UserMissionRepository userMissionRepository;
+    private final UserDailyMissionRepository userDailyMissionRepository;
+    private final UserOnetimeMissionRepository userOnetimeMissionRepository;
 
     @GetMapping("/login")
     public String loginForm() {
@@ -130,13 +122,17 @@ public class HomeController {
         List<Mission> dailyMissions = missionRepository.findByMissionType(MissionType.DAILY);
         List<Mission> oneTimeMissions = missionRepository.findByMissionType(MissionType.ONE_TIME);
 
-        List<UserMission> userMissions = userMissionRepository.findByUserIdAndMissionDate(
+        // Get today's daily missions for the user
+        List<UserDailyMission> userDailyMissions = userDailyMissionRepository.findByUserIdAndMissionDate(
                 (int) userId, LocalDate.now());
+
+        // Get all one-time missions for the user
+        List<UserOnetimeMission> userOnetimeMissions = userOnetimeMissionRepository.findByUserId((int) userId);
 
         model.addAttribute("dailyMissions", dailyMissions);
         model.addAttribute("oneTimeMissions", oneTimeMissions);
-        model.addAttribute("userMissions", userMissions);
-        model.addAttribute("userMissions", userMissions);
+        model.addAttribute("userDailyMissions", userDailyMissions);
+        model.addAttribute("userOnetimeMissions", userOnetimeMissions);
 
         return "index";
     }

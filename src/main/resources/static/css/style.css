@@ -51,9 +51,9 @@ body {
 }
 
 .spin-number {
-    font-size: 14px;
+    font-size: 1.2em;
     font-weight: bold;
-    color: #fff;
+    color: #333;
     padding: 0 6px;
 }
 
@@ -377,80 +377,68 @@ body {
 .mission-item {
     display: flex;
     align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
     justify-content: space-between;
-    padding: 12px;
-    margin-bottom: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 6px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    gap: 12px;
+    gap: 10px;
 }
 
 .mission-progress {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-}
-
-.mission-progress span {
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-    min-width: 30px;
+    min-width: 50px;
+    margin-right: 5px;
 }
 
 .mission-icon {
     width: 24px;
     height: 24px;
-    object-fit: contain;
 }
 
 .mission-description {
-    flex: 1;
+    flex-grow: 1;
     font-size: 14px;
-    color: white;
-    line-height: 1.4;
 }
 
 .claim-btn {
-    padding: 8px 16px;
-    background-color: #ffcc00;
-    color: #000;
-    font-size: 14px;
-    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
     border: none;
-    border-radius: 8px;
+    background-color: #4CAF50;
+    color: white;
     cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    flex-shrink: 0;
+    font-weight: bold;
+    min-width: 80px;
 }
 
 .claim-btn:hover:not(.disabled) {
-    background-color: #e6b800;
+    background-color: #45a049;
 }
 
 .claim-btn.disabled {
     background-color: #cccccc;
     color: #666666;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .claim-all-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #ffcc00;
-    color: #000;
-    font-size: 16px;
-    font-weight: bold;
+    margin-top: 15px;
+    padding: 8px 15px;
+    border-radius: 4px;
     border: none;
-    border-radius: 8px;
+    background-color: #4CAF50;
+    color: white;
     cursor: pointer;
-    margin-top: 16px;
-    transition: background-color 0.3s ease;
+    font-weight: bold;
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 .claim-all-btn:hover {
-    background-color: #e6b800;
+    background-color: #45a049;
 }
 
 /* History Panel */
@@ -618,4 +606,22 @@ body {
 .close-btn:hover {
     background-color: rgba(255, 255, 255, 0.2);
     color: #ffcccc;
+}
+
+.mission-reward {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: bold;
+    color: #e09f3e;
+}
+
+.mission-reward::after {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url('/img/ticket.png');
+    background-size: contain;
+    background-repeat: no-repeat;
 }

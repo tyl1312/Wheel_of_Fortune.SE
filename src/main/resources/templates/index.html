@@ -65,14 +65,15 @@
                     <div class="mission-list" id="daily-missions">
                         <div th:each="mission : ${dailyMissions}" class="mission-item">
                             <div class="mission-progress">
-                                <span
-                                    th:text="${userMissions != null and userMissions.?[missionId == __${mission.missionId}__ and isCompleted].size() > 0 ? '1/1' : '0/1'}">0/1</span>
+                                <span th:with="missionId=${mission.missionId}, userMission=${userDailyMissions.?[missionId == missionId].size() > 0 ? userDailyMissions.?[missionId == missionId].get(0) : null}"
+                                    th:text="${userMission != null and userMission.isCompleted ? '1/1' : '0/1'}">0/1</span>
                                 <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
                             </div>
                             <div class="mission-description" th:text="${mission.missionDescription}"></div>
-                            <button class="claim-btn"
-                                th:classappend="${userMissions != null and userMissions.?[missionId == __${mission.missionId}__ and isCompleted].size() > 0 ? '' : 'disabled'}"
-                                th:data-mission-id="${mission.missionId}" th:data-mission-type="DAILY">
+                            <button class="claim-btn" 
+                                th:with="missionId=${mission.missionId}, userMission=${userDailyMissions.?[missionId == missionId].size() > 0 ? userDailyMissions.?[missionId == missionId].get(0) : null}"
+                                th:classappend="${userMission != null and userMission.isCompleted and !userMission.isClaimed ? '' : 'disabled'}"
+                                th:attr="data-mission-id=${mission.missionId}, data-mission-type='DAILY'">
                                 Claim
                             </button>
                         </div>
@@ -85,14 +86,15 @@
                     <div class="mission-list" id="one-time-missions">
                         <div th:each="mission : ${oneTimeMissions}" class="mission-item">
                             <div class="mission-progress">
-                                <span
-                                    th:text="${userMissions != null and userMissions.?[missionId == __${mission.missionId}__ and isCompleted].size() > 0 ? '1/1' : '0/1'}">0/1</span>
+                                <span th:with="missionId=${mission.missionId}, userMission=${userOnetimeMissions.?[missionId == missionId].size() > 0 ? userOnetimeMissions.?[missionId == missionId].get(0) : null}"
+                                    th:text="${userMission != null and userMission.isCompleted ? '1/1' : '0/1'}">0/1</span>
                                 <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
                             </div>
                             <div class="mission-description" th:text="${mission.missionDescription}"></div>
                             <button class="claim-btn"
-                                th:classappend="${userMissions != null and userMissions.?[missionId == __${mission.missionId}__ and isCompleted].size() > 0 ? '' : 'disabled'}"
-                                th:data-mission-id="${mission.missionId}" th:data-mission-type="ONE_TIME">
+                                th:with="missionId=${mission.missionId}, userMission=${userOnetimeMissions.?[missionId == missionId].size() > 0 ? userOnetimeMissions.?[missionId == missionId].get(0) : null}"
+                                th:classappend="${userMission != null and userMission.isCompleted and !userMission.isClaimed ? '' : 'disabled'}"
+                                th:attr="data-mission-id=${mission.missionId}, data-mission-type='ONE_TIME'">
                                 Claim
                             </button>
                         </div>
@@ -137,7 +139,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script th:src="@{/js/script.js}"></script>
     <script th:src="@{/js/wheel.js}"></script>
-
+    <script th:src="@{/js/mission.js}"></script>
 </body>
 
 </html>
