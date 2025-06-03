@@ -14,6 +14,9 @@ public class Mission {
     private String missionDescription;
     private int spinReward;
 
+    @Column(name = "target_value") 
+    private long targetValue;
+
     @Column(name = "mission_type")
     @Enumerated(EnumType.STRING)
     private MissionType missionType;

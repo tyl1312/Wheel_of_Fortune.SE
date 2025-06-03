@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "user_onetime_missions")
 @Data
@@ -29,6 +27,7 @@ public class UserOnetimeMission {
     @Column(name = "is_claimed")
     private boolean isClaimed;
     
-    @Column(name = "completed_at")
-    private LocalDateTime completedAt;
+    @Column(name = "current_progress")
+    private long currentProgress;
+
 }

@@ -51,10 +51,10 @@ body {
 }
 
 .spin-number {
-    font-size: 1.2em;
+    font-size: 1em;
     font-weight: bold;
     color: #333;
-    padding: 0 6px;
+    padding: 0 4px;
 }
 
 .container {
@@ -308,8 +308,8 @@ body {
 #mission-panel {
     position: fixed;
     top: 0;
-    right: -500px;
-    width: 500px;
+    right: -550px;
+    width: 550px;
     height: 100%;
     background: linear-gradient(to bottom, #4da6ff, #0073e6);
     box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
@@ -354,6 +354,17 @@ body {
     padding: 8px 0;
     margin-bottom: 12px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+}
+
+.mission-section:nth-child(3) .mission-section-title::before {
+    content: "🏆";
+    margin-right: 8px;
+}
+
+.mission-section:nth-child(2) .mission-section-title::before {
+    content: "📅";
+    margin-right: 8px;
 }
 
 #daily-missions {
@@ -377,50 +388,85 @@ body {
 .mission-item {
     display: flex;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     justify-content: space-between;
-    gap: 10px;
+    gap: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.mission-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.mission-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
 }
 
 .mission-progress {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    min-width: 50px;
-    margin-right: 5px;
+    min-width: 60px;
+    margin-right: 8px;
+    background: linear-gradient(45deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.15));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    color: #fff;
 }
 
 .mission-icon {
     width: 24px;
     height: 24px;
+    margin-left: 8px;
 }
 
 .mission-description {
     flex-grow: 1;
     font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+}
+
+.small-ticket {
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 .claim-btn {
-    padding: 5px 10px;
-    border-radius: 4px;
-    border: none;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #2c3e50;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #e6c200;
     font-weight: bold;
-    min-width: 80px;
+    min-width: 90px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
 }
 
 .claim-btn:hover:not(.disabled) {
-    background-color: #45a049;
+    background: linear-gradient(45deg, #ffed4e, #ffd700);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
+.claim-all-btn.disabled,
 .claim-btn.disabled {
-    background-color: #cccccc;
-    color: #666666;
-    cursor: not-allowed;
-    opacity: 0.7;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    opacity: 0.6;
 }
 
 .claim-all-btn {
@@ -428,8 +474,8 @@ body {
     padding: 8px 15px;
     border-radius: 4px;
     border: none;
-    background-color: #4CAF50;
-    color: white;
+    background-color: #ffd700; 
+    color: #333; 
     cursor: pointer;
     font-weight: bold;
     display: block;
@@ -437,8 +483,8 @@ body {
     margin-bottom: 10px;
 }
 
-.claim-all-btn:hover {
-    background-color: #45a049;
+.claim-all-btn:hover(.disabled) {
+    background-color: #ffcc00; 
 }
 
 /* History Panel */

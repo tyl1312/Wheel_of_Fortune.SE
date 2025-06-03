@@ -14,7 +14,9 @@ function claimMission(missionId, missionType) {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Failed to claim mission');
+            return response.json().then(err => {
+                throw new Error(err.error || 'Failed to claim mission');
+            });
         }
         return response.json();
     })
@@ -25,21 +27,29 @@ function claimMission(missionId, missionType) {
             spinElement.textContent = data.spin;
         }
         
-        // Update the button state - add disabled class
+        // Update the button state - add disabled class and change text
         const claimedBtn = document.querySelector(`button[data-mission-id="${missionId}"][data-mission-type="${missionType}"]`);
         if (claimedBtn) {
             claimedBtn.classList.add('disabled');
+            claimedBtn.textContent = 'Claimed';
+            claimedBtn.disabled = true;
         }
         
+        // Check if we should disable the claim all button
+        updateClaimAllButtonState();
+        
         // Show confetti animation
-        confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 }
-        });
+        if (typeof confetti !== 'undefined') {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
     })
     .catch(error => {
         console.error('Error claiming mission:', error);
+        alert('Error: ' + error.message);
     });
 }
 
@@ -53,7 +63,9 @@ function claimAllMissions() {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Failed to claim all missions');
+            return response.json().then(err => {
+                throw new Error(err.error || 'Failed to claim all missions');
+            });
         }
         return response.json();
     })
@@ -64,14 +76,19 @@ function claimAllMissions() {
             spinElement.textContent = data.spin;
         }
         
-        // Update all claim buttons to be disabled
+        // Update all claim buttons to be disabled and change text
         const claimButtons = document.querySelectorAll('.claim-btn:not(.disabled)');
         claimButtons.forEach(button => {
             button.classList.add('disabled');
+            button.textContent = 'Claimed';
+            button.disabled = true;
         });
         
+        // Disable the claim all button
+        updateClaimAllButtonState();
+        
         // Show confetti animation if any missions were claimed
-        if (claimButtons.length > 0) {
+        if (data.claimedCount > 0 && typeof confetti !== 'undefined') {
             confetti({
                 particleCount: 150,
                 spread: 100,
@@ -81,7 +98,24 @@ function claimAllMissions() {
     })
     .catch(error => {
         console.error('Error claiming all missions:', error);
+        alert('Error: ' + error.message);
     });
+}
+
+// Function to update the state of the claim all button
+function updateClaimAllButtonState() {
+    const claimAllButton = document.querySelector('.claim-all-btn');
+    const availableClaimButtons = document.querySelectorAll('.claim-btn:not(.disabled)');
+    
+    if (claimAllButton) {
+        if (availableClaimButtons.length === 0) {
+            claimAllButton.disabled = true;
+            claimAllButton.classList.add('disabled');
+        } else {
+            claimAllButton.disabled = false;
+            claimAllButton.classList.remove('disabled');
+        }
+    }
 }
 
 // Set up event listeners when the DOM is loaded
@@ -94,33 +128,37 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (showMissionBtn && missionPanel) {
         showMissionBtn.addEventListener('click', function() {
-            missionPanel.classList.remove('hidden');
-            if (overlay) overlay.classList.add('active');
+            missionPanel.classList.add('visible'); 
+            if (overlay) overlay.classList.add('visible'); 
         });
     }
     
     if (closeMissionBtn && missionPanel) {
         closeMissionBtn.addEventListener('click', function() {
-            missionPanel.classList.add('hidden');
-            if (overlay) overlay.classList.remove('active');
+            missionPanel.classList.remove('visible');
+            if (overlay) overlay.classList.remove('visible'); 
         });
     }
     
-    // Individual claim buttons
-    const claimButtons = document.querySelectorAll('.claim-btn:not(.disabled)');
-    claimButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const missionId = parseInt(this.getAttribute('data-mission-id'));
-            const missionType = this.getAttribute('data-mission-type');
+    //Claim button
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('claim-btn') && !e.target.classList.contains('disabled')) {
+            const missionId = parseInt(e.target.getAttribute('data-mission-id'));
+            const missionType = e.target.getAttribute('data-mission-type');
             claimMission(missionId, missionType);
-        });
+        }
     });
 
-    // Claim all button
+    //Claim all button
     const claimAllButton = document.querySelector('.claim-all-btn');
     if (claimAllButton) {
         claimAllButton.addEventListener('click', function() {
-            claimAllMissions();
+            if (!this.disabled) {
+                claimAllMissions();
+            }
         });
     }
+    
+    //Initialize the claim all button state on page load
+    updateClaimAllButtonState();
 });

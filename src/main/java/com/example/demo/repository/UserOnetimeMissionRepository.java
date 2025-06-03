@@ -11,8 +11,8 @@ import java.util.Optional;
 public interface UserOnetimeMissionRepository extends JpaRepository<UserOnetimeMission, Integer> {
     Optional<UserOnetimeMission> findByUserIdAndMissionId(int userId, int missionId);
     
+    List<UserOnetimeMission> findByUserId(int userId);
+    
     List<UserOnetimeMission> findByUserIdAndIsCompletedAndIsClaimed(
         int userId, boolean isCompleted, boolean isClaimed);
-        
-    List<UserOnetimeMission> findByUserId(int userId);
 }

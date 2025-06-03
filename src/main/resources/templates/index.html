@@ -29,7 +29,7 @@
                     <div th:each="reward, stat : ${purchaseRewards}"
                         th:class="${'milestone milestone__' + reward.threshold/30000}"
                         th:data-value="${reward.threshold/30000}" th:data-reward-id="${reward.rewardId}">
-                        <div class="dot" th:text="${reward.threshold + 'k'}">250k</div>
+                        <div class="dot" th:text="${reward.threshold/1000 + 'k'}">250k</div>
                         <div class="ticket-box"
                             th:classappend="${claimedRewards != null and claimedRewards.?[rewardId == __${reward.rewardId}__].size() > 0} ? 'claimed' : ''">
                             <img src="/img/ticket.png" alt="Ticket" class="ticket-img">
@@ -65,37 +65,46 @@
                     <div class="mission-list" id="daily-missions">
                         <div th:each="mission : ${dailyMissions}" class="mission-item">
                             <div class="mission-progress">
-                                <span th:with="missionId=${mission.missionId}, userMission=${userDailyMissions.?[missionId == missionId].size() > 0 ? userDailyMissions.?[missionId == missionId].get(0) : null}"
-                                    th:text="${userMission != null and userMission.isCompleted ? '1/1' : '0/1'}">0/1</span>
+                                <span th:text="${mission.spinReward}"></span>
                                 <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
                             </div>
                             <div class="mission-description" th:text="${mission.missionDescription}"></div>
-                            <button class="claim-btn" 
-                                th:with="missionId=${mission.missionId}, userMission=${userDailyMissions.?[missionId == missionId].size() > 0 ? userDailyMissions.?[missionId == missionId].get(0) : null}"
+                            <!-- Update the Daily Missions claim button: -->
+                            <button class="claim-btn"
+                                th:with="userMission=${userDailyMissions.?[missionId == __${mission.missionId}__].size() > 0 ? userDailyMissions.?[missionId == __${mission.missionId}__].get(0) : null}"
                                 th:classappend="${userMission != null and userMission.isCompleted and !userMission.isClaimed ? '' : 'disabled'}"
-                                th:attr="data-mission-id=${mission.missionId}, data-mission-type='DAILY'">
+                                th:attr="data-mission-id=${mission.missionId}, data-mission-type='DAILY'"
+                                th:disabled="${userMission == null or !userMission.isCompleted or userMission.isClaimed}"
+                                th:text="${userMission != null and userMission.isClaimed ? 'Claimed' : 'Claim'}">
                                 Claim
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- One-time Missions -->
+                <!-- Achievement Missions -->
                 <div class="mission-section">
                     <h4 class="mission-section-title">Achievement Missions</h4>
                     <div class="mission-list" id="one-time-missions">
                         <div th:each="mission : ${oneTimeMissions}" class="mission-item">
                             <div class="mission-progress">
-                                <span th:with="missionId=${mission.missionId}, userMission=${userOnetimeMissions.?[missionId == missionId].size() > 0 ? userOnetimeMissions.?[missionId == missionId].get(0) : null}"
-                                    th:text="${userMission != null and userMission.isCompleted ? '1/1' : '0/1'}">0/1</span>
-                                <img src="/img/ticket.png" alt="Ticket" class="mission-icon">
+                                <span
+                                    th:with="userMission=${userOnetimeMissions.?[missionId == __${mission.missionId}__].size() > 0 ? userOnetimeMissions.?[missionId == __${mission.missionId}__].get(0) : null}"
+                                    th:text="${userMission != null ? userMission.currentProgress : 0} + ' / ' + ${mission.targetValue}">
+                                </span>
                             </div>
                             <div class="mission-description" th:text="${mission.missionDescription}"></div>
+                            <!-- Update the Achievement Missions claim button: -->
                             <button class="claim-btn"
-                                th:with="missionId=${mission.missionId}, userMission=${userOnetimeMissions.?[missionId == missionId].size() > 0 ? userOnetimeMissions.?[missionId == missionId].get(0) : null}"
+                                th:with="userMission=${userOnetimeMissions.?[missionId == __${mission.missionId}__].size() > 0 ? userOnetimeMissions.?[missionId == __${mission.missionId}__].get(0) : null}"
                                 th:classappend="${userMission != null and userMission.isCompleted and !userMission.isClaimed ? '' : 'disabled'}"
-                                th:attr="data-mission-id=${mission.missionId}, data-mission-type='ONE_TIME'">
-                                Claim
+                                th:attr="data-mission-id=${mission.missionId}, data-mission-type='ONE_TIME'"
+                                th:disabled="${userMission == null or !userMission.isCompleted or userMission.isClaimed}">
+                                <span th:if="${userMission != null and userMission.isClaimed}">Claimed</span>
+                                <span th:unless="${userMission != null and userMission.isClaimed}">
+                                    Claim &nbsp; <span th:text="${mission.spinReward}"></span> &nbsp;
+                                    <img src="/img/ticket.png" alt="Ticket" class="small-ticket">
+                                </span>
                             </button>
                         </div>
                     </div>
