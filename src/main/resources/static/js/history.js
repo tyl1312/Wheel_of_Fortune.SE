@@ -27,7 +27,7 @@ function updateHistoryTable(historyList) {
 }
 
 function fetchAndShowHistory() {
-    fetch("/spin/history")
+    fetch("/api/spin-history")
         .then(response => {
             if (!response.ok) {
                 throw new Error("Failed to fetch history");

@@ -7,25 +7,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const closePopupBtn = document.getElementById("closePopupBtn");
     const overlay = document.getElementById('overlay');
 
-    // Lucky Wheel Variables
-    const rewards = [
-        "Free Grocery Bag",
-        "10% Off Coupon", 
-        "Mystery Item",
-        "BOGO Coupon",
-        "200K VND Voucher",
-        "One more spin",
-        "Free Produce Item",
-        "50K VND Voucher",
-        "Super Prize Entry",
-        "Better luck next time!"
-    ];
-    const segmentCount = rewards.length;
-    const segmentAngle = 360 / segmentCount;
+    // Wheel Variables
+    let rewards = [];
+    let prizes = [];
+    let segmentCount = 0;
+    let segmentAngle = 0;
     let angleSoFar = 0;
     let isSpinning = false; 
 
-    drawWheel();
+    loadPrizes();
 
     spinButton.addEventListener('click', function() {
         if (isSpinning) return; 
@@ -38,32 +28,144 @@ document.addEventListener('DOMContentLoaded', function () {
         
         isSpinning = true;
         this.disabled = true;
-        
-        // Call backend to update spin mission first
+
         fetch('/api/spin', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
+            headers: { 'Content-Type': 'application/json' }
         })
         .then(response => response.text())
         .then(data => {
             if (data === 'success') {
-                spinWheel();
+                spinWheelWithProbability();
             } else {
                 console.error('Failed to update mission');
-                isSpinning = false;
-                this.disabled = false;
+                resetSpinButton();
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            isSpinning = false;
-            this.disabled = false;
+            resetSpinButton();
         });
     });
 
     closePopupBtn.addEventListener('click', closePopup);
+
+    function loadPrizes() {
+        fetch('/api/prizes')
+            .then(response => response.json())
+            .then(data => {
+                prizes = data;
+                rewards = data.map(prize => prize.prizeName);
+                segmentCount = rewards.length;
+                segmentAngle = 360 / segmentCount;
+                drawWheel();
+            })
+            .catch(error => {
+                console.error('Error loading prizes:', error);
+                alert('Failed to load wheel prizes. Please refresh the page.');
+            });
+    }
+
+    function spinWheelWithProbability() {
+        // Get probability-based result from server
+        fetch('/api/spin-wheel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.error) {
+                alert(result.error);
+                resetSpinButton();
+                return;
+            }
+
+            animateWheelToResult(result.prizeName);
+            updateSpinCount();
+
+            setTimeout(() => {
+                showSpinResult(result.prizeName);
+            }, 4200);
+        })
+        .catch(error => {
+            console.error('Error spinning wheel:', error);
+            alert('Failed to spin wheel. Please try again.');
+            resetSpinButton();
+        });
+    }
+
+    function animateWheelToResult(prizeName) {
+        const selectedIndex = rewards.findIndex(reward => reward === prizeName);
+
+        const targetAngle = selectedIndex * segmentAngle + (segmentAngle / 2);
+        const spinRotations = 720 + Math.random() * 360;
+        const finalAngle = (360 - targetAngle + spinRotations) % 360;
+ 
+        angleSoFar += spinRotations + finalAngle;
+        wheel.style.transform = `rotate(${angleSoFar}deg)`;
+    }
+
+    function updateSpinCount() {
+        const spinElement = document.querySelector('.spin-number');
+        const currentSpins = parseInt(spinElement.textContent);
+        const newSpinCount = currentSpins - 1;
+        spinElement.textContent = newSpinCount;
+
+        // Update in database
+        fetch('/users/me', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ spin: newSpinCount })
+        }).catch(error => {
+            console.error('Error updating spins:', error);
+            spinElement.textContent = currentSpins;
+        });
+    }
+
+    function showSpinResult(prizeName) {
+        if (prizeName === "Better luck next time!") {
+            resultText.innerText = "Better luck next time!";
+        } else if (prizeName === "One more spin") {
+            giveExtraSpin();
+            resultText.innerText = "One more spin! ";
+        } else {
+            resultText.innerText = `🎁 Congratulations! You won: ${prizeName}!`;
+            showConfetti();
+        }
+
+        saveResultToServer(prizeName);
+        showResultPopup();
+        resetSpinButton();
+    }
+
+    function giveExtraSpin() {
+        const spinElement = document.querySelector('.spin-number');
+        const currentSpins = parseInt(spinElement.textContent);
+        const newSpinCount = currentSpins + 1;
+        spinElement.textContent = newSpinCount;
+        
+        // Update in database
+        fetch('/users/me', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ spin: newSpinCount })
+        });
+    }
+
+    function saveResultToServer(prizeName) {
+        fetch('/api/save-spin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ reward: prizeName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Spin result saved:', data);
+        })
+        .catch(error => {
+            console.error('Error saving result:', error);
+        });
+    }
 
     function drawWheel() {
         const centerX = 200;
@@ -109,9 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
             text.setAttribute("fill", "white");
             text.setAttribute("font-size", "12"); 
             text.setAttribute("font-weight", "bold");
-            text.setAttribute("text-shadow", "1px 1px 2px rgba(0,0,0,0.7)");
             
-            // Rotate text to be readable
             const textRotation = textAngle > 90 && textAngle < 270 ? textAngle + 180 : textAngle;
             text.setAttribute("transform", `rotate(${textRotation}, ${tx}, ${ty})`);
             text.textContent = rewards[i];
@@ -119,120 +219,30 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function spinWheel() {
-        const spinNumberElement = document.querySelector('.spin-number');
-        const currentSpins = parseInt(spinNumberElement.textContent);
-
-        if (currentSpins <= 0) {
-            alert('You have no spins remaining!');
-            isSpinning = false;
-            spinButton.disabled = false;
-            return;
+    function showConfetti() {
+        if (typeof confetti !== 'undefined') {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ["#ff0000", "#00ff00", "#0000ff", "#ffff00"]
+            });
         }
-
-        const randomSpin = 720 + Math.random() * 360;
-        angleSoFar += randomSpin;
-        wheel.style.transform = `rotate(${angleSoFar}deg)`;
-
-        const newSpinCount = currentSpins - 1;
-        spinNumberElement.textContent = newSpinCount;
-
-        // Update user spins in database
-        fetch(`/users/me`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                spin: newSpinCount
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to update spins');
-            }
-            return response.json();
-        })
-        .catch(error => {
-            console.error("Error updating spins:", error);
-            spinNumberElement.textContent = currentSpins;
-        });
-
-        setTimeout(() => {
-            const finalAngle = angleSoFar % 360;
-            const pointerAngle = 360 - finalAngle;
-            let index = Math.floor(pointerAngle / segmentAngle);
-            if (index >= segmentCount) index = 0;
-
-            const result = rewards[index];
-
-            // Handle different prize types
-            if (result === "Better luck next time!") {
-                resultText.innerText = "Better luck next time!";
-            } else if (result === "One more spin") {
-                const currentSpinCount = parseInt(spinNumberElement.textContent);
-                spinNumberElement.textContent = currentSpinCount + 1;
-                
-                fetch(`/users/me`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        spin: currentSpinCount + 1
-                    })
-                });
-                
-                resultText.innerText = "🎉 One more spin! 🎉";
-            } else {
-                resultText.innerText = `🎁 Congratulations! You won: ${result}!`;
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: ["#ff0000", "#00ff00", "#0000ff", "#ffff00"],
-                });
-            }
-
-            saveResultToServer(result);
-            resultPopup.style.display = "block";
-            overlay.classList.add('visible');
-            
-            // Reset spinning state
-            isSpinning = false;
-            spinButton.disabled = false;
-        }, 4200);
     }
 
-    function saveResultToServer(reward) {
-        fetch("/spin/save-result", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: new URLSearchParams({
-                reward: reward
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => {
-                    throw new Error(err.error || 'Failed to save result');
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Server response:", data);
-        })
-        .catch(error => {
-            console.error("Error saving result:", error);
-        });
+    function showResultPopup() {
+        resultPopup.style.display = "block";
+        overlay.classList.add('visible');
     }
 
     function closePopup() {
         resultPopup.style.display = "none";
         overlay.classList.remove('visible');
+    }
+
+    function resetSpinButton() {
+        isSpinning = false;
+        spinButton.disabled = false;
     }
 });
 

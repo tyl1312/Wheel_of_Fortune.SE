@@ -1,125 +1,97 @@
-//package com.example.demo.controller;
-//
-//import com.example.demo.model.Prize;
-//import com.example.demo.model.PrizeHistory;
-//import com.example.demo.model.PrizeHistoryKey;
-//import com.example.demo.model.User;
-//import com.example.demo.repository.PrizeHistoryRepository;
-//import com.example.demo.repository.PrizeRepository;
-//import com.example.demo.repository.UserRepository;
-//import jakarta.servlet.http.HttpSession;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.sql.Timestamp;
-//import java.time.LocalDateTime;
-//
-//@RestController
-//@RequiredArgsConstructor
-//@RequestMapping("/spin")
-//public class SpinController {
-//
-//    private final PrizeRepository prizeRepository;
-//    private final UserRepository userRepository;
-//    private final PrizeHistoryRepository prizeHistoryRepository;
-//
-//    @PostMapping("/save-result")
-//    public String saveSpinResult(@RequestParam String reward, HttpSession session) {
-//        Object sessionUserId = session.getAttribute("userId");
-//        if (sessionUserId == null) {
-//            return "User not logged in";
-//        }
-//
-//        Integer userId = (Integer) sessionUserId;
-//        User user = userRepository.findById(userId).orElse(null);
-//        if (user == null) {
-//            return "User not found";
-//        }
-//
-//        Prize prize = prizeRepository.findByPrizeDescription(reward).orElse(null);
-//        if (prize == null) {
-//            return "Prize not found: " + reward;
-//        }
-//
-//        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-//
-//        PrizeHistoryKey key = new PrizeHistoryKey(user.getUser_id(), prize.getPrizeId(), now);
-//        PrizeHistory history = new PrizeHistory();
-//        history.setId(key);
-//        history.setUser(user);
-//        history.setPrize(prize);
-//
-//        prizeHistoryRepository.save(history);
-//
-//        return "Saved prize: " + prize.getPrizeName();
-//    }
-//
-//}
-
 package com.example.demo.controller;
 
 import com.example.demo.dto.PrizeHistoryResponse;
+import com.example.demo.model.Prize;
+import com.example.demo.repository.PrizeRepository;
 import com.example.demo.service.SpinService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @RestController
-@RequestMapping("/spin")
 @AllArgsConstructor
 public class SpinController {
     
     private final SpinService spinService;
+    private final PrizeRepository prizeRepository;
     
-    @PostMapping("/save-result")
-    public ResponseEntity<Map<String, Object>> saveSpinResult(
+    @GetMapping("/api/prizes")
+    public List<Prize> getAllPrizes() {
+        return prizeRepository.findAll();
+    }
+    
+    @PostMapping("/api/spin-wheel")
+    public Map<String, Object> spinWheel() {
+        List<Prize> prizes = prizeRepository.findAll();
+        
+        if (prizes.isEmpty()) {
+            return Map.of("error", "No prizes available");
+        }
+        
+        Prize selectedPrize = selectPrizeByProbability(prizes);
+        
+        return Map.of(
+            "success", true,
+            "prizeId", selectedPrize.getPrizeId(),
+            "prizeName", selectedPrize.getPrizeName(),
+            "probability", selectedPrize.getPrizeProbability()
+        );
+    }
+    
+    @PostMapping("/api/save-spin")
+    public ResponseEntity<Map<String, String>> saveSpinResult(
             @RequestParam("reward") String reward, 
             HttpSession session) {
         
-        Object userId = session.getAttribute("userId");
+        Integer userId = (Integer) session.getAttribute("userId");
         if (userId == null) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("error", "User not logged in");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            return ResponseEntity.badRequest()
+                .body(Map.of("error", "User not logged in"));
         }
         
         try {
-            spinService.saveSpinResult((int) userId, reward);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Spin result saved successfully");
-            response.put("reward", reward);
-            
-            return ResponseEntity.ok(response);
-        } catch (IllegalStateException e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            spinService.saveSpinResult(userId, reward);
+            return ResponseEntity.ok(Map.of("message", "Spin saved successfully"));
         } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("error", "An unexpected error occurred");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.badRequest()
+                .body(Map.of("error", "Failed to save spin result"));
         }
     }
     
-    @GetMapping("/history")
+    @GetMapping("/api/spin-history")
     public ResponseEntity<List<PrizeHistoryResponse>> getSpinHistory(HttpSession session) {
-        Object userId = session.getAttribute("userId");
+        Integer userId = (Integer) session.getAttribute("userId");
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.badRequest().build();
         }
         
-        try {
-            List<PrizeHistoryResponse> history = spinService.getUserSpinHistory((int) userId);
-            return ResponseEntity.ok(history);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        List<PrizeHistoryResponse> history = spinService.getUserSpinHistory(userId);
+        return ResponseEntity.ok(history);
+    }
+    
+    private Prize selectPrizeByProbability(List<Prize> prizes) {
+        // Calculate total probability
+        float totalProbability = 0;
+        for (Prize prize : prizes) {
+            totalProbability += prize.getPrizeProbability();
         }
+        
+        float randomValue = new Random().nextFloat() * totalProbability;
+        
+        // Find winning prize
+        float currentProbability = 0;
+        for (Prize prize : prizes) {
+            currentProbability += prize.getPrizeProbability();
+            if (randomValue <= currentProbability) {
+                return prize;
+            }
+        }
+
+        return prizes.get(prizes.size() - 1);
     }
 }
