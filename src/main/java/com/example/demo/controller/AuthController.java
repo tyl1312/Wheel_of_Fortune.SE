@@ -36,14 +36,34 @@ public class AuthController {
             return "login";
         }
 
+        // Set user session attributes
         session.setAttribute("userId", user.getUser_id());
         session.setAttribute("email", user.getEmail());
         session.setAttribute("fullName", user.getFull_name());
         session.setAttribute("gender", user.getGender());
+        
+        // Debug logging - check what value we're getting
+        Boolean isAdminValue = user.getIsAdmin();
+        System.out.println("DEBUG - User: " + email + ", isAdmin raw value: " + isAdminValue);
+        
+        boolean isAdmin = Boolean.TRUE.equals(isAdminValue);
+        System.out.println("DEBUG - Final isAdmin boolean: " + isAdmin);
+        
+        session.setAttribute("isAdmin", isAdmin);
 
-        missionService.handleLoginMissions(user.getUser_id());
+        // Handle login missions for regular users only
+        if (!isAdmin) {
+            missionService.handleLoginMissions(user.getUser_id());
+        }
 
-        return "redirect:/";
+        // Redirect based on admin status
+        if (isAdmin) {
+            System.out.println("DEBUG - Redirecting to admin dashboard");
+            return "redirect:/admin/dashboard";
+        } else {
+            System.out.println("DEBUG - Redirecting to main site");
+            return "redirect:/";
+        }
     }
 
     @GetMapping("/register")
@@ -71,6 +91,7 @@ public class AuthController {
         user.setGender(gender);
         user.setSpin(0);
         user.setTotal_spent(0L);
+        user.setIsAdmin(false); // Explicitly set to false
 
         User savedUser = userRepository.save(user);
 
@@ -78,6 +99,7 @@ public class AuthController {
         session.setAttribute("email", savedUser.getEmail());
         session.setAttribute("fullName", savedUser.getFull_name());
         session.setAttribute("gender", savedUser.getGender());
+        session.setAttribute("isAdmin", false); // Explicitly set to false
 
         // For new users, always initialize both missions
         missionService.updateDailyMission(savedUser.getUser_id(), 1);
@@ -88,6 +110,12 @@ public class AuthController {
 
     @PostMapping("/logout")
     public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login";
+    }
+
+    @GetMapping("/logout")
+    public String logoutGet(HttpSession session) {
         session.invalidate();
         return "redirect:/login";
     }
