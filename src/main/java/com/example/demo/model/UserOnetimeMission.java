@@ -30,4 +30,11 @@ public class UserOnetimeMission {
     @Column(name = "current_progress")
     private long currentProgress;
 
+    public UserOnetimeMission(Integer userId, Integer missionId, boolean isCompleted, boolean isClaimed, long currentProgress) {
+        this.userId = userId;
+        this.missionId = missionId;
+        this.isCompleted = isCompleted;
+        this.isClaimed = isClaimed;
+        this.currentProgress = currentProgress;
+    }
 }

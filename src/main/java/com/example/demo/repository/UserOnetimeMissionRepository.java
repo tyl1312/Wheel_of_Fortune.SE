@@ -9,10 +9,10 @@ import java.util.Optional;
 
 @Repository
 public interface UserOnetimeMissionRepository extends JpaRepository<UserOnetimeMission, Integer> {
-    Optional<UserOnetimeMission> findByUserIdAndMissionId(int userId, int missionId);
+    Optional<UserOnetimeMission> findByUserIdAndMissionId(Integer userId, Integer missionId);
     
-    List<UserOnetimeMission> findByUserId(int userId);
+    List<UserOnetimeMission> findByUserId(Integer userId);
     
     List<UserOnetimeMission> findByUserIdAndIsCompletedAndIsClaimed(
-        int userId, boolean isCompleted, boolean isClaimed);
+        Integer userId, boolean isCompleted, boolean isClaimed);
 }

@@ -23,6 +23,15 @@
         .btn-back {
             font-size: 0.9rem;
         }
+        .btn-logout {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            font-size: 0.9rem;
+        }
+        .btn-logout:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
     </style>
 </head>
 <body>
@@ -55,14 +64,22 @@
             </select>
         </div>
 
-        <div class="d-grid mb-2">
+        <div class="d-grid mb-3">
             <button type="submit" class="btn btn-primary">Update Info</button>
         </div>
-
-        <div class="text-center mt-3">
-            <a th:href="@{/}" class="text-decoration-none btn-back">← Back to Home</a>
-        </div>
     </form>
+
+    <!-- Navigation buttons -->
+    <div class="row g-2">
+        <div class="col-6">
+            <a th:href="@{/}" class="btn btn-outline-secondary w-100 btn-back">← Back to Home</a>
+        </div>
+        <div class="col-6">
+            <form th:action="@{/logout}" method="post" class="d-inline w-100">
+                <button type="submit" class="btn btn-danger w-100 btn-logout">Logout</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>

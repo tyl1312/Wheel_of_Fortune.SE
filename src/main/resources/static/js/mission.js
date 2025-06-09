@@ -1,13 +1,11 @@
-// Functions to handle mission claiming
-
 // Function to handle claiming a single mission
 function claimMission(missionId, missionType) {
-    fetch('/missions/claim', {
+    fetch('/api/missions/claim', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({
+        body: new URLSearchParams({
             missionId: missionId,
             missionType: missionType
         })
@@ -21,21 +19,18 @@ function claimMission(missionId, missionType) {
         return response.json();
     })
     .then(data => {
-        // Update the spin count in the UI
         const spinElement = document.querySelector('.spin-number');
         if (spinElement) {
-            spinElement.textContent = data.spin;
+            spinElement.textContent = data.spinReward; // Fix: use spinReward not spin
         }
         
-        // Update the button state - add disabled class and change text
         const claimedBtn = document.querySelector(`button[data-mission-id="${missionId}"][data-mission-type="${missionType}"]`);
         if (claimedBtn) {
             claimedBtn.classList.add('disabled');
             claimedBtn.textContent = 'Claimed';
             claimedBtn.disabled = true;
         }
-        
-        // Check if we should disable the claim all button
+
         updateClaimAllButtonState();
         
         // Show confetti animation
@@ -55,7 +50,7 @@ function claimMission(missionId, missionType) {
 
 // Function to handle claiming all completed missions
 function claimAllMissions() {
-    fetch('/missions/claim-all', {
+    fetch('/api/missions/claim-all', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -70,13 +65,11 @@ function claimAllMissions() {
         return response.json();
     })
     .then(data => {
-        // Update the spin count in the UI
         const spinElement = document.querySelector('.spin-number');
         if (spinElement) {
             spinElement.textContent = data.spin;
         }
         
-        // Update all claim buttons to be disabled and change text
         const claimButtons = document.querySelectorAll('.claim-btn:not(.disabled)');
         claimButtons.forEach(button => {
             button.classList.add('disabled');
@@ -84,7 +77,6 @@ function claimAllMissions() {
             button.disabled = true;
         });
         
-        // Disable the claim all button
         updateClaimAllButtonState();
         
         // Show confetti animation if any missions were claimed

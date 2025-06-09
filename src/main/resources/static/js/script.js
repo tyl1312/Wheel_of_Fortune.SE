@@ -5,16 +5,12 @@ const milestones = document.querySelectorAll('.milestone');
 const showMissionBtn = document.getElementById('show-mission-btn');
 const closeMissionBtn = document.getElementById('close-mission-btn');
 const missionPanel = document.getElementById('mission-panel');
-
-const showHistoryBtn = document.getElementById('show-history-btn');
-const closeHistoryBtn = document.getElementById('close-history-btn');
-const historyPanel = document.getElementById('history-panel');
-const overlay = document.getElementById('overlay');
+const overlay = document.getElementById('overlay'); 
 
 document.addEventListener('DOMContentLoaded', function () {
-    const totalSpent = document.body.getAttribute('total-spent');
-    const maxSpent = 3000000; // 3000k
-    value = Math.min(100, (totalSpent / maxSpent) * 100);
+    const totalSpent = document.body.getAttribute('data-total-spent');
+    const maxSpent = 3000000;
+    const value = Math.min(100, (totalSpent / maxSpent) * 100);
     updateProgressBar(value);
 
     document.querySelectorAll('.ticket-box').forEach(function (box) {
@@ -55,28 +51,31 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function updateProgressBar(value) {
+    // Ensure progress element exists
+    if (!progress) {
+        console.error('Progress bar element not found');
+        return;
+    }
+
     progress.style.height = `${value}%`;
     progress.style.bottom = '0';
     progress.style.backgroundColor = getComputedStyle(document.documentElement)
         .getPropertyValue('--milestone-color').trim();
 
+    // Update milestones based on progress
     milestones.forEach(milestone => {
         const milestoneValue = parseInt(milestone.getAttribute('data-value'));
         if (milestoneValue <= value) {
-            const classList = Array.from(milestone.classList);
-            const matchingClass = classList.find(c => c.startsWith('milestone__'));
-            if (matchingClass) {
-                const ticketBox = document.querySelector(`.${matchingClass} .ticket-box`);
-                if (ticketBox) {
-                    ticketBox.classList.add("revealed");
-                }
+            // Find the ticket box within this specific milestone
+            const ticketBox = milestone.querySelector('.ticket-box');
+            if (ticketBox && !ticketBox.classList.contains('claimed')) {
+                ticketBox.classList.add("revealed");
             }
         }
     });
 }
 
-// Show and hide the mission and history panel
-
+// Show and hide the mission panel
 showMissionBtn.addEventListener('click', () => {
     missionPanel.classList.add('visible');
     overlay.classList.add('visible');
@@ -87,50 +86,18 @@ closeMissionBtn.addEventListener('click', () => {
     overlay.classList.remove('visible');
 });
 
-showHistoryBtn.addEventListener('click', () => {
-    fetchPrizeHistory();
-    historyPanel.classList.add('visible');
-    overlay.classList.add('visible');
-});
-
-closeHistoryBtn.addEventListener('click', () => {
-    historyPanel.classList.remove('visible');
-    overlay.classList.remove('visible');
-});
-
 overlay.addEventListener('click', () => {
-    let missionVisible = missionPanel.classList.contains('visible');
-    let historyVisible = historyPanel.classList.contains('visible');
+    const missionVisible = missionPanel.classList.contains('visible');
+    const historyPanel = document.getElementById('history-panel');
+    const historyVisible = historyPanel && historyPanel.classList.contains('visible');
 
-    if (missionVisible || historyVisible) {
+    if (missionVisible) {
         missionPanel.classList.remove('visible');
+        overlay.classList.remove('visible');
+    } else if (historyVisible) {
         historyPanel.classList.remove('visible');
         overlay.classList.remove('visible');
     }
 });
-
-function fetchPrizeHistory() {
-    fetch("/spin/history")
-        .then(response => response.json())
-        .then(data => {
-            const historyList = document.getElementById("history-list");
-            const noHistoryText = document.getElementById("no-history-text");
-            historyList.innerHTML = "";
-
-            if (data.length === 0) {
-                noHistoryText.style.display = "block";
-            } else {
-                noHistoryText.style.display = "none";
-                data.forEach(entry => {
-                    const li = document.createElement("li");
-                    li.textContent = `${entry.prizeName} - ${new Date(entry.timestamp).toLocaleString()}`;
-                    historyList.appendChild(li);
-                });
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching prize history:", error);
-        });
-}
 
 

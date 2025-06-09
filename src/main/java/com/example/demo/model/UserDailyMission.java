@@ -31,4 +31,14 @@ public class UserDailyMission {
     
     @Column(name = "is_claimed")
     private boolean isClaimed;
+    
+    // Custom constructor without ID (for new entities)
+    public UserDailyMission(Integer userId, Integer missionId, LocalDate missionDate, 
+                           boolean isCompleted, boolean isClaimed) {
+        this.userId = userId;
+        this.missionId = missionId;
+        this.missionDate = missionDate;
+        this.isCompleted = isCompleted;
+        this.isClaimed = isClaimed;
+    }
 }
