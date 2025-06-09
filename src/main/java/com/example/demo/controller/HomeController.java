@@ -13,7 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Collections;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -21,8 +21,8 @@ public class HomeController {
     private final UserService userService;
     private final MissionService missionService;
     private final PurchaseRewardRepository purchaseRewardRepository;
-    private final UserPurchaseRewardRepository userPurchaseRewardRepository; // Add this
-
+    private final UserPurchaseRewardRepository userPurchaseRewardRepository; 
+    
     @GetMapping("/")
     public String index(Model model, HttpSession session) {
         Object userId = session.getAttribute("userId");
